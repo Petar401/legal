@@ -377,6 +377,7 @@ const ro: Dict = {
     title: 'Răspunsuri rapide',
     note: 'Răspunsuri automate. Nu este o persoană.',
     hello: 'Bună ziua. Pot răspunde la întrebări simple despre Advice4you. Alegeți un subiect sau scrieți o întrebare.',
+    chooseLang: 'Alegeți limba',
     placeholder: 'Scrieți întrebarea dumneavoastră',
     send: 'Trimiteți',
     close: 'Închideți chatul',

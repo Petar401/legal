@@ -69,47 +69,89 @@ test('cookie banner remembers the choice', async ({ page }) => {
   await expect(banner).toBeVisible();
 });
 
-const chatCases: [string, string, RegExp][] = [
-  ['', 'Do you help with visa questions?', /immigration advice/i],
-  ['', 'how much does it cost', /free/i],
-  ['bg/', 'личен лекар', /GP/],
-  ['ro/', 'cat costa', /./],
-  ['tr/', 'doktor', /GP/],
-  ['ku/', 'doktor', /GP/],
-  ['ckb/', 'دکتۆر', /GP/],
-  // Any language on any page: the chat reads the question, not the page language
-  ['ckb/', 'doktor', /GP/],
-  ['', 'личен лекар', /GP/],
-  ['', 'دکتۆر', /GP/],
+// The cookie banner would cover the chat on small screens, so reject cookies before the page loads
+async function prepareChat(page: Page) {
+  await prepare(page);
+  await page.addInitScript(() => localStorage.setItem('a4y-consent', 'rejected'));
+}
+
+// Opens the chat and chooses a language, as a visitor does
+async function openChat(page: Page, locale: string) {
+  await page.locator('[data-chat-toggle]').click();
+  await page.locator(`[data-pick="${locale}"]`).click();
+  await expect(page.locator('[data-chat]')).toHaveAttribute('data-stage', 'chat');
+}
+
+// [page prefix, language chosen, question, expected answer]
+const chatCases: [string, string, string, RegExp][] = [
+  ['', 'en', 'Do you help with visa questions?', /immigration advice/i],
+  ['', 'en', 'how much does it cost', /free/i],
+  ['bg/', 'bg', 'личен лекар', /GP/],
+  ['ro/', 'ro', 'cat costa', /./],
+  ['tr/', 'tr', 'doktor', /GP/],
+  ['ku/', 'ku', 'doktor', /GP/],
+  ['ckb/', 'ckb', 'دکتۆر', /GP/],
+  // The question can be in any language: the chat reads it, and answers in the chosen language
+  ['ckb/', 'ckb', 'doktor', /GP/],
+  ['', 'en', 'личен лекар', /GP/],
+  ['', 'en', 'دکتۆر', /GP/],
+  ['', 'tr', 'doctor', /GP/],
   // Arabic-keyboard spellings of Sorani letters
-  ['ckb/', 'دكتور', /GP/],
-  ['', 'دكتور', /GP/],
+  ['ckb/', 'ckb', 'دكتور', /GP/],
+  ['', 'en', 'دكتور', /GP/],
   // Romanian typed with cedillas and without diacritics
-  ['', 'cat costa', /./],
-  ['ro/', 'ce servicii oferiți', /./],
+  ['', 'ro', 'cat costa', /./],
+  ['ro/', 'ro', 'ce servicii oferiți', /./],
   // Address and visiting questions in all six languages
-  ['', 'what is your address', /73A Dereham Road/],
-  ['bg/', 'адрес', /73A Dereham Road/],
-  ['ro/', 'adresa', /73A Dereham Road/],
-  ['tr/', 'adres nerede', /73A Dereham Road/],
-  ['ku/', 'navnîşan', /73A Dereham Road/],
-  ['ckb/', 'ناونیشان', /73A Dereham Road/],
+  ['', 'en', 'what is your address', /73A Dereham Road/],
+  ['bg/', 'bg', 'адрес', /73A Dereham Road/],
+  ['ro/', 'ro', 'adresa', /73A Dereham Road/],
+  ['tr/', 'tr', 'adres nerede', /73A Dereham Road/],
+  ['ku/', 'ku', 'navnîşan', /73A Dereham Road/],
+  ['ckb/', 'ckb', 'ناونیشان', /73A Dereham Road/],
 ];
-for (const [l, q, re] of chatCases) {
-  test(`chatbot answers "${q}" on /${l}`, async ({ page }) => {
-    await prepare(page);
-    await page.addInitScript(() => localStorage.setItem('a4y-consent', 'rejected'));
+for (const [l, chosen, q, re] of chatCases) {
+  test(`chatbot answers "${q}" on /${l} in ${chosen}`, async ({ page }) => {
+    await prepareChat(page);
     await page.goto(`/${l}`);
-    await page.locator('[data-chat-toggle]').click();
+    await openChat(page, chosen);
     await page.locator('#chat-input').fill(q);
     await page.locator('#chat-input').press('Enter');
-    const reply = page.locator('.msg--bot').nth(1);
+    // Messages: language prompt, your choice, greeting, your question, the answer
+    const reply = page.locator('.msg--bot').nth(2);
     await expect(reply).toBeVisible();
     await expect(reply).toContainText(re);
-    const fallback = await page.evaluate(() => JSON.parse(document.querySelector('[data-chat-data]')!.textContent!).fallback);
+    const fallback = await page.evaluate((c) => {
+      return fetch('/chat-data.json').then((r) => r.json()).then((all) => all[c].fallback);
+    }, chosen);
     await expect(reply).not.toContainText(fallback);
+    const lang = await page.evaluate((c) => fetch('/chat-data.json').then((r) => r.json()).then((all) => all[c].lang), chosen);
+    await expect(reply).toHaveAttribute('lang', lang);
   });
 }
+
+test('the chat asks for a language before it says anything else', async ({ page }) => {
+  await prepareChat(page);
+  await page.goto('/');
+  await page.locator('[data-chat-toggle]').click();
+  await expect(page.locator('[data-pick]')).toHaveCount(6);
+  await expect(page.locator('.msg--bot')).toHaveCount(1);
+  await expect(page.locator('[data-chat-chips]')).toBeHidden();
+  await expect(page.locator('#chat-input')).toBeDisabled();
+});
+
+test('the greeting and topics come in the chosen language', async ({ page }) => {
+  await prepareChat(page);
+  await page.goto('/');
+  await openChat(page, 'tr');
+  const turkish = await page.evaluate(() => fetch('/chat-data.json').then((r) => r.json()).then((all) => all.tr));
+  const greeting = page.locator('.msg--bot').nth(1);
+  await expect(greeting).toContainText(turkish.ui.hello);
+  await expect(greeting).toHaveAttribute('lang', 'tr');
+  await expect(page.locator('[data-chat-chips] .chip').first()).toHaveText(turkish.ui.chips[0].label);
+  await expect(page.locator('#chat-input')).toBeEnabled();
+  await expect(page.locator('#chat-title')).toHaveText(turkish.ui.title);
+});
 
 test('unknown address shows the 404 page in the right language', async ({ page }) => {
   await prepare(page);
@@ -118,23 +160,21 @@ test('unknown address shows the 404 page in the right language', async ({ page }
   await expect(page.locator('[data-nf]')).toHaveAttribute('lang', 'ro');
 });
 
-test('the 404 page chat speaks the visitor language', async ({ page }) => {
-  await prepare(page);
-  await page.addInitScript(() => localStorage.setItem('a4y-consent', 'rejected'));
+test('the 404 page chat speaks the language the visitor picks', async ({ page }) => {
+  await prepareChat(page);
   await page.goto('/ro/does-not-exist/');
-  await page.locator('[data-chat-toggle]').click();
+  await openChat(page, 'ro');
   await expect(page.locator('#chat-title')).not.toHaveText('Quick answers');
   await expect(page.locator('[data-chat]')).toHaveAttribute('lang', 'ro');
 });
 
-test('a question in another language is answered in that language', async ({ page }) => {
-  await prepare(page);
-  await page.addInitScript(() => localStorage.setItem('a4y-consent', 'rejected'));
+test('replies stay in the chosen language even when the question is in another', async ({ page }) => {
+  await prepareChat(page);
   await page.goto('/');
-  await page.locator('[data-chat-toggle]').click();
-  await page.locator('#chat-input').fill('دکتۆر');
+  await openChat(page, 'ckb');
+  await page.locator('#chat-input').fill('doctor');
   await page.locator('#chat-input').press('Enter');
-  const reply = page.locator('.msg--bot').nth(1);
+  const reply = page.locator('.msg--bot').nth(2);
   await expect(reply).toHaveAttribute('lang', 'ckb');
   await expect(reply).toHaveAttribute('dir', 'rtl');
 });

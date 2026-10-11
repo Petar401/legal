@@ -2,12 +2,13 @@
 // A small helper that answers common questions from the FAQ data. No AI, no tracking, nothing stored.
 // The page's own language is built into the page. The other languages load the first time the chat opens,
 // so a question typed in any of the six languages gets an answer, on any page.
+// The visitor picks a language first. The greeting and every answer then come in that language.
 import en from '../i18n/en';
-import { getDict, locales, type Locale } from '../i18n';
+import { getDict, locales, localeInfo, type Locale } from '../i18n';
 import { chatBundle } from '../lib/chat';
 
-interface Props { locale: Locale; adaptive?: boolean }
-const { locale, adaptive = false } = Astro.props;
+interface Props { locale: Locale }
+const { locale } = Astro.props;
 const t = getDict(locale);
 
 // English keywords always work too, people often type in English
@@ -15,9 +16,9 @@ const bundle = chatBundle(locale);
 if (locale !== 'en') {
   bundle.intents.forEach((it, i) => { it.keywords = [...it.keywords, ...(en.bot.intents[i]?.keywords ?? [])]; });
 }
-const data = { ...bundle, page: locale, adaptive, all: locales };
+const data = { ...bundle, page: locale, all: locales };
 ---
-<div class="chat" data-chat lang={bundle.lang} dir={bundle.dir}>
+<div class="chat" data-chat data-stage="pick" lang={bundle.lang} dir={bundle.dir}>
   <button class="chat__fab" type="button" aria-expanded="false" aria-controls="chat-panel" data-chat-toggle>
     <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
       <path d="M8 26 Q32 8 56 26" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
@@ -42,7 +43,16 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     </header>
 
     <div class="chat__log" role="log" aria-live="polite" aria-relevant="additions" data-chat-log>
-      <div class="msg msg--bot"><p data-ui="hello">{t.bot.hello}</p></div>
+      <div class="msg msg--bot" lang={bundle.lang} dir={bundle.dir}>
+        <p>{t.bot.chooseLang}</p>
+        <div class="lang-pick" role="group" aria-label={t.bot.chooseLang} data-chat-pick>
+          {locales.map((l) => (
+            <button type="button" class="chip" data-pick={l} lang={localeInfo[l].htmlLang} dir={localeInfo[l].dir}>
+              {localeInfo[l].name}{localeInfo[l].variant ? ` · ${localeInfo[l].variant}` : ''}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
 
     <div class="chat__chips" data-chat-chips>
@@ -51,8 +61,8 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
 
     <form class="chat__form" data-chat-form>
       <label for="chat-input" class="visually-hidden" data-ui="placeholder">{t.bot.placeholder}</label>
-      <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" maxlength="200" placeholder={t.bot.placeholder} dir="auto" />
-      <button type="submit" class="chat__send" aria-label={t.bot.send} data-ui-label="send">
+      <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" maxlength="200" placeholder={t.bot.placeholder} dir="auto" disabled />
+      <button type="submit" class="chat__send" aria-label={t.bot.send} data-ui-label="send" disabled>
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
@@ -120,6 +130,11 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
   .chip { flex: none; padding: 0.45rem 0.85rem; border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.22); background: transparent; color: var(--silver-100); font: 500 0.8rem/1.2 var(--font-body); cursor: pointer; transition: background 0.2s, transform 0.1s; }
   .chip:hover { background: rgba(255, 255, 255, 0.08); }
   .chip:active { transform: scale(0.96); }
+  .chip:disabled { opacity: 0.55; cursor: default; }
+  .chip[aria-pressed='true'] { background: rgba(255, 255, 255, 0.14); opacity: 1; }
+  .lang-pick { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+  .chat[data-stage='pick'] .chat__chips { display: none; }
+  .chat__form input:disabled, .chat__send:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .chat__form { display: flex; gap: 0.5rem; padding: 0.85rem 1rem 1rem; border-top: 1px solid rgba(188, 195, 208, 0.12); }
   .chat__form input { flex: 1; min-width: 0; height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.2); background: rgba(255, 255, 255, 0.05); color: var(--silver-50); font: 400 1rem/1 var(--font-body); }
@@ -146,7 +161,7 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     intents: Intent[]; fallback: string; readMore: string; contactPrompt: string; contact: string;
     whatsapp: string; whatsappLabel: string; email: string; emailLabel: string; you: string; bot: string;
   };
-  type Data = Bundle & { page: string; adaptive: boolean; all: string[] };
+  type Data = Bundle & { page: string; all: string[] };
 
   const root = document.querySelector<HTMLElement>('[data-chat]')!;
   const toggle = root.querySelector<HTMLButtonElement>('[data-chat-toggle]')!;
@@ -155,12 +170,16 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
   const chips = root.querySelector<HTMLElement>('[data-chat-chips]')!;
   const form = root.querySelector<HTMLFormElement>('[data-chat-form]')!;
   const input = form.querySelector('input')!;
+  const sendBtn = form.querySelector<HTMLButtonElement>('.chat__send')!;
+  const picker = root.querySelector<HTMLElement>('[data-chat-pick]')!;
   let data: Data | null = null;
   // Every language, filled in from /chat-data.json. Until then the page's own language answers.
   let bundles: Record<string, Bundle> = {};
   let loading: Promise<void> | null = null;
   let order: string[] = [];
   let uiLocale = '';
+  // Bundles that already carry the English keywords (the page's own bundle gets them at build time)
+  const withEnglish = new Set<string>();
 
   // Fold spelling variants so keyboards and writing habits do not matter:
   // accents and Turkish dotless i, Arabic and Persian letter forms for Sorani, joiners, Arabic-Indic digits.
@@ -192,11 +211,13 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     return total;
   }
 
-  // Best answer across all languages. The page's language wins ties and gets a small head start.
-  function match(text: string): { intent: Intent; locale: string } | null {
+  // Best intent across all languages, so a question in any language is understood.
+  // The chosen language wins ties and gets a small head start. Only the intent id is returned: the answer
+  // is always read from the chosen language.
+  function match(text: string): string | null {
     const q = norm(text);
     const words = new Set(q.split(/[^\p{L}\p{N}]+/u).filter(Boolean));
-    let best: { intent: Intent; locale: string } | null = null;
+    let best: string | null = null;
     let bestScore = 0;
     for (const l of order) {
       const b = bundles[l];
@@ -204,15 +225,11 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
       const boost = l === data!.page ? 1.2 : 1;
       for (const intent of b.intents) {
         const sc = score(intent, q, words) * boost;
-        if (sc > bestScore) { bestScore = sc; best = { intent, locale: l }; }
+        if (sc > bestScore) { bestScore = sc; best = intent.id; }
       }
     }
     return best;
   }
-
-  // For a question we cannot answer: reply in the script it was typed in, otherwise the page language.
-  const guessLocale = (text: string) =>
-    /[Ѐ-ӿ]/.test(text) && bundles.bg ? 'bg' : /[؀-ۿ]/.test(text) && bundles.ckb ? 'ckb' : data!.page;
 
   function add(kind: 'bot' | 'you', text: string, b: Bundle, actions: { href: string; label: string; external?: boolean }[] = []) {
     const el = document.createElement('div');
@@ -244,9 +261,10 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     log.scrollTop = log.scrollHeight;
   }
 
-  function reply(found: { intent: Intent; locale: string } | null, text = '') {
-    if (!found) {
-      const b = bundles[guessLocale(text)] ?? bundles[data!.page];
+  function reply(id: string | null) {
+    const b = bundles[data!.page];
+    const intent = id ? b.intents.find((i) => i.id === id) : undefined;
+    if (!intent) {
       add('bot', b.fallback, b, [
         { href: b.contact, label: b.contactPrompt },
         { href: b.whatsapp, label: b.whatsappLabel, external: true },
@@ -254,8 +272,7 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
       ]);
       return;
     }
-    const b = bundles[found.locale];
-    add('bot', found.intent.answer, b, found.intent.link ? [{ href: found.intent.link, label: b.readMore }] : []);
+    add('bot', intent.answer, b, intent.link ? [{ href: intent.link, label: b.readMore }] : []);
   }
 
   function loadAll(): Promise<void> {
@@ -270,7 +287,7 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     return loading;
   }
 
-  // Translate the chat's own words (the 404 page serves every language from one file)
+  // Translate the chat's own words into the chosen language
   function applyUi(l: string) {
     const b = bundles[l];
     if (!b || uiLocale === l) return;
@@ -294,37 +311,55 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
       data = JSON.parse(root.querySelector('[data-chat-data]')!.textContent!);
       bundles = { [data!.page]: data as Bundle };
       order = [data!.page];
-      loadAll().then(() => {
-        if (!data!.adaptive) return;
-        // The 404 page picks its language from the URL or the saved choice, the same way its text does
-        const first = location.pathname.split('/').filter(Boolean)[0];
-        let saved: string | null = null;
-        try { saved = localStorage.getItem('a4y-lang'); } catch {}
-        const has = (k: string | null): k is string => !!k && Object.prototype.hasOwnProperty.call(bundles, k);
-        const l = has(first) ? first : has(saved) ? saved : data!.page;
-        data!.page = l;
-        order = [l, 'en', ...data!.all.filter((x) => x !== l && x !== 'en')];
-        applyUi(l);
-      });
+      if (data!.page !== 'en') withEnglish.add(data!.page);
+      loadAll();
     }
     root.toggleAttribute('data-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    if (open) setTimeout(() => input.focus({ preventScroll: true }), 80);
-    else toggle.focus();
+    if (open) {
+      setTimeout(() => {
+        const target = root.dataset.stage === 'pick' ? picker.querySelector<HTMLElement>(`[data-pick="${data!.page}"]`) : input;
+        target?.focus({ preventScroll: true });
+      }, 80);
+    } else toggle.focus();
   }
+
+  // Step one: the visitor chooses a language. The greeting and the topic chips only appear after that.
+  let picking = false;
+  picker.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pick]');
+    if (!btn || picking || root.dataset.stage !== 'pick') return;
+    picking = true;
+    picker.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((b) => { b.disabled = true; b.setAttribute('aria-pressed', String(b === btn)); });
+    add('you', btn.textContent!.trim(), bundles[data!.page]);
+    await Promise.all([loadAll(), new Promise((r) => setTimeout(r, 280))]);
+    // If the other languages could not load (offline), carry on in the page language
+    const l = bundles[btn.dataset.pick!] ? btn.dataset.pick! : data!.page;
+    if (!withEnglish.has(l) && bundles.en) {
+      bundles[l].intents.forEach((it, i) => { it.keywords = [...it.keywords, ...(bundles.en.intents[i]?.keywords ?? [])]; });
+      withEnglish.add(l);
+    }
+    data!.page = l;
+    order = [l, 'en', ...data!.all.filter((x) => x !== l && x !== 'en')];
+    applyUi(l);
+    add('bot', bundles[l].ui.hello, bundles[l]);
+    root.dataset.stage = 'chat';
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus({ preventScroll: true });
+  });
 
   toggle.addEventListener('click', () => setOpen(true));
   root.querySelector('[data-chat-close]')!.addEventListener('click', () => setOpen(false));
   panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  // Chips are rebuilt on the 404 page, so listen on the container
+  // Chips are rebuilt when a language is chosen, so listen on the container
   chips.addEventListener('click', (e) => {
     const chip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-intent]');
     if (!chip) return;
     const b = bundles[data!.page];
     add('you', chip.textContent!.trim(), b);
-    const intent = b.intents.find((i) => i.id === chip.dataset.intent);
-    reply(intent ? { intent, locale: data!.page } : null);
+    reply(chip.dataset.intent ?? null);
   });
 
   form.addEventListener('submit', async (e) => {
@@ -334,6 +369,6 @@ const data = { ...bundle, page: locale, adaptive, all: locales };
     add('you', text, bundles[data!.page]);
     input.value = '';
     await Promise.all([loadAll(), new Promise((r) => setTimeout(r, 280))]);
-    reply(match(text), text);
+    reply(match(text));
   });
 </script>

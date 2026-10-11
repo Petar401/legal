@@ -377,6 +377,7 @@ const ku: Dict = {
     title: 'Bersivên bilez',
     note: 'Bersivên otomatîk. Ne mirov e.',
     hello: 'Silav. Ez dikarim bersiva pirsên hêsan derbarê Advice4you de bidim. Mijarekê hilbijêrin an pirsekê binivîsin.',
+    chooseLang: 'Zimanê xwe hilbijêrin',
     placeholder: 'Pirsa xwe binivîsin',
     send: 'Bişînin',
     close: 'Çatê bigirin',

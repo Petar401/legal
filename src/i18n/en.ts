@@ -378,6 +378,7 @@ const en = {
     title: 'Quick answers',
     note: 'Automatic answers. Not a person.',
     hello: 'Hello. I can answer simple questions about Advice4you. Choose a topic or type a question.',
+    chooseLang: 'Choose your language',
     placeholder: 'Type your question',
     send: 'Send',
     close: 'Close chat',
