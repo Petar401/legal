@@ -39,7 +39,7 @@ npx playwright test  # accessibility (axe) and behaviour tests
 - `src/i18n/en.ts`: all English copy. The other language files mirror it exactly.
 - `src/content/blog/<lang>/`: journal articles, one Markdown file per language.
 - `src/views/`: page layouts. `src/pages/[...path].astro` builds every page in every language.
-- `src/components/Chatbot.astro`: the help chat. It needs no API and matches keywords from the language files.
+- `src/components/Chatbot.astro`: the help chat. It needs no API and matches keywords from the language files. The visitor picks a language first, then gets the greeting and all answers in it.
 - `src/components/CookieBanner.astro`: cookie consent. Today the site stores only essential settings. Any future analytics must wait for `window.a4yConsent === 'accepted'`.
 - `src/config/photos.ts`: photos served from the Unsplash CDN, with credits on the accessibility page.
 - `scripts/make-icons.mjs`: regenerates favicons and the social share image from `public/logo.svg`.

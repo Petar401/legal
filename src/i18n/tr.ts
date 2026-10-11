@@ -377,6 +377,7 @@ const tr: Dict = {
     title: "Hızlı cevaplar",
     note: "Otomatik cevaplar. Bir insan değil.",
     hello: "Merhaba. Advice4you hakkındaki basit soruları cevaplayabilirim. Bir konu seçin ya da sorunuzu yazın.",
+    chooseLang: 'Dilinizi seçin',
     placeholder: "Sorunuzu yazın",
     send: "Gönderin",
     close: "Sohbeti kapatın",
