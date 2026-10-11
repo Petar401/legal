@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { getDict, type Locale } from '../i18n';
+import { site, whatsappLink } from '../config/site';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const c = t.contact;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: c.h1,
+  about: { '@id': `${site.url}/#organisation` },
+};
+const methods = [
+  { label: c.waLabel, value: site.whatsappDisplay, href: whatsappLink(c.waPrefill), external: true, cta: t.cta.whatsappLong, ltr: true },
+  { label: c.phoneLabel, value: site.phoneDisplay, href: `tel:${site.phoneHref}`, external: false, cta: t.cta.call, ltr: true },
+  { label: c.emailLabel, value: site.email, href: `mailto:${site.email}`, external: false, cta: t.cta.email, ltr: true },
+];
+---
+<Base locale={locale} path="contact" title={c.title} description={c.description} jsonLd={[ld]}>
+  <PageHead locale={locale} kicker={c.kicker} title={c.h1} lead={c.lead} photo="elmHill" crumbs={[{ label: t.nav.contact }]}>
+    <p class="based">{c.based}</p>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap grid">
+      <ul class="methods" role="list">
+        {methods.map((m, i) => (
+          <li data-reveal style={`--delay:${i * 80}ms`}>
+            <a class="method" href={m.href} rel={m.external ? 'noopener' : undefined} target={m.external ? '_blank' : undefined}>
+              <span class="method__label">{m.label}</span>
+              <span class="method__value" dir={m.ltr ? 'ltr' : undefined}>{m.value}</span>
+              <span class="method__cta">{m.cta}<svg class="arrow" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+              {m.external && <span class="visually-hidden"> ({t.a11y.newTab})</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <aside class="side">
+        <div class="tips" data-reveal>
+          <h2 class="h3">{c.tipsTitle}</h2>
+          <ol role="list">{c.tips.map((tip, i) => <li><span aria-hidden="true">{i + 1}</span>{tip}</li>)}</ol>
+          <p class="note">{c.privacyNote}</p>
+        </div>
+        <div class="sos" data-reveal role="note">
+          <h2 class="sos__title">{c.emergencyTitle}</h2>
+          <p>{c.emergencyText}</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .based { margin-top: 2rem; font-size: 0.875rem; color: var(--silver-300); display: inline-flex; align-items: center; gap: 0.6rem; }
+  .based::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--silver-200); box-shadow: 0 0 0 4px rgba(232, 236, 242, 0.15); }
+  .grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .methods { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ivory-line); }
+  .methods li { border-bottom: 1px solid var(--ivory-line); }
+  .method { display: grid; grid-template-columns: 8rem minmax(0, 1fr) auto; align-items: baseline; gap: 1.5rem; padding: 2rem 0; text-decoration: none; color: inherit; }
+  .method__label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted); }
+  :global(:lang(ckb)) .method__label { letter-spacing: 0; font-size: 0.875rem; }
+  .method__value { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; overflow-wrap: anywhere; transition: color 0.2s; }
+  .method__cta { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
+  .method:hover .method__value { color: var(--midnight-600); }
+  .method:hover .arrow { transform: translateX(3px); }
+  .arrow { transition: transform 0.35s var(--ease-out); }
+  :global([dir='rtl']) .arrow { transform: scaleX(-1); }
+  .side { display: grid; gap: 1.25rem; }
+  .tips { padding: clamp(1.75rem, 3vw, 2.5rem); border-radius: var(--radius); background: var(--ivory-2); border: 1px solid var(--ivory-line); }
+  .tips h2 { margin-bottom: 1.25rem; }
+  .tips ol { list-style: none; margin: 0 0 1.5rem; padding: 0; display: grid; gap: 0.75rem; }
+  .tips li { display: flex; gap: 0.9rem; align-items: baseline; }
+  .tips li span { font-family: var(--font-display); font-style: italic; color: var(--midnight-600); min-width: 1rem; }
+  .note { font-size: 0.875rem; color: var(--ink-soft); padding-top: 1.25rem; border-top: 1px solid var(--ivory-line); }
+  .sos { padding: 1.5rem 1.75rem; border-radius: var(--radius); background: var(--ink); color: var(--silver-200); font-size: 0.9375rem; }
+  .sos__title { font-family: var(--font-body); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--silver-400); margin-bottom: 0.5rem; }
+  :global(:lang(ckb)) .sos__title { letter-spacing: 0; font-size: 0.875rem; }
+  @media (max-width: 56rem) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 36rem) { .method { grid-template-columns: 1fr; gap: 0.5rem; padding: 1.5rem 0; } }
+</style>

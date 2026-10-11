@@ -1,0 +1,82 @@
+---
+import { getDict, localePath, type Locale } from '../i18n';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale).cookieBanner;
+---
+<section class="cookie" aria-labelledby="cookie-title" data-cookie>
+  <div class="cookie__text">
+    <h2 id="cookie-title" class="cookie__title">{t.title}</h2>
+    <p>{t.text} <a href={localePath(locale, 'cookies')}>{t.policy}</a></p>
+  </div>
+  <div class="cookie__actions">
+    <button type="button" class="btn btn--sm" data-consent="accepted">{t.accept}</button>
+    <button type="button" class="btn btn--sm btn--ghost" data-consent="rejected">{t.reject}</button>
+  </div>
+</section>
+
+<style>
+  .cookie {
+    position: fixed;
+    z-index: 40;
+    inset-inline: max(1rem, env(safe-area-inset-left));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    margin-inline: auto;
+    max-width: 40rem;
+    display: none;
+    align-items: center;
+    gap: 1.25rem 1.5rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1.25rem;
+    color: var(--silver-200);
+    background: rgba(11, 21, 48, 0.82);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(232, 236, 242, 0.14);
+    box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    animation: rise 0.7s var(--spring) both;
+  }
+  :global(.has-cookie) .cookie { display: flex; }
+  .cookie__title { font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; color: var(--silver-50); letter-spacing: 0; margin-bottom: 0.2rem; }
+  .cookie p { margin: 0; }
+  .cookie a { color: var(--silver-50); }
+  .cookie__actions { display: flex; gap: 0.5rem; flex: none; }
+  .btn--sm { min-height: 2.5rem; padding: 0.5rem 1.1rem; font-size: 0.8125rem; }
+  .btn--ghost { color: var(--silver-50); box-shadow: inset 0 0 0 1px rgba(232, 236, 242, 0.42); }
+  @keyframes rise { from { transform: translateY(16px) scale(0.98); } }
+  @media (max-width: 40rem) {
+    .cookie { flex-direction: column; align-items: stretch; }
+    .cookie__actions > * { flex: 1; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .cookie { background: var(--midnight-800); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+</style>
+
+<script>
+  // Only essential storage is used today. Optional tools (for example analytics) must check
+  // window.a4yConsent === 'accepted' before loading, and listen for the 'a4y:consent' event.
+  const KEY = 'a4y-consent';
+  const banner = document.querySelector<HTMLElement>('[data-cookie]')!;
+  const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+  const show = (on: boolean) => document.documentElement.classList.toggle('has-cookie', on);
+  (window as any).a4yConsent = read();
+
+  banner.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const value = b.dataset.consent!;
+      try { localStorage.setItem(KEY, value); } catch {}
+      (window as any).a4yConsent = value;
+      window.dispatchEvent(new CustomEvent('a4y:consent', { detail: value }));
+      show(false);
+    }),
+  );
+  document.querySelectorAll('[data-cookie-open]').forEach((b) =>
+    b.addEventListener('click', () => {
+      show(true);
+      banner.querySelector<HTMLButtonElement>('button')?.focus();
+    }),
+  );
+</script>

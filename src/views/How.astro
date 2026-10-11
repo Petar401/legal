@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Photo from '../components/Photo.astro';
+import { getDict, type Locale } from '../i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const h = t.how;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: h.h1,
+  step: h.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.title, text: s.text })),
+};
+---
+<Base locale={locale} path="how-it-works" title={h.title} description={h.description} jsonLd={[ld]}>
+  <PageHead locale={locale} kicker={h.kicker} title={h.h1} lead={h.lead} photo="writing" crumbs={[{ label: t.nav.how }]} />
+
+  <section class="section">
+    <div class="wrap">
+      <ol class="flow" role="list">
+        {h.steps.map((s, i) => (
+          <li data-reveal style={`--delay:${i * 80}ms`}>
+            <span class="flow__num" aria-hidden="true">{i + 1}</span>
+            <h2 class="h3">{s.title}</h2>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section ivory-2">
+    <div class="wrap split">
+      <div class="split__media" data-reveal><Photo name="letter" locale={locale} sizes="(min-width: 56rem) 45vw, 100vw" /></div>
+      <div class="split__text">
+        <h2 class="h2" data-reveal>{h.bringTitle}</h2>
+        <ul class="check" role="list">{h.bringItems.map((b) => <li data-reveal>{b}</li>)}</ul>
+        <hr class="rule" />
+        <h2 class="h3 cost-title" data-reveal>{h.costTitle}</h2>
+        <p class="lead" data-reveal>{h.costText}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand locale={locale} />
+</Base>
+
+<style>
+  .flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ivory-line); }
+  .flow li { padding: 2.5rem 2rem 2.5rem 0; border-inline-end: 1px solid var(--ivory-line); }
+  .flow li + li { padding-inline-start: 2rem; }
+  .flow li:last-child { border-inline-end: 0; }
+  .flow__num { display: block; font-family: var(--font-display); font-size: 4.5rem; line-height: 1; font-style: italic; color: var(--midnight-600); margin-bottom: 1.75rem; }
+  .flow .h3 { margin-bottom: 0.75rem; }
+  .flow p { color: var(--ink-soft); }
+  @media (max-width: 60rem) {
+    .flow { grid-template-columns: 1fr 1fr; }
+    .flow li:nth-child(2) { border-inline-end: 0; }
+    .flow li:nth-child(3) { padding-inline-start: 0; }
+    .flow li { border-bottom: 1px solid var(--ivory-line); }
+  }
+  @media (max-width: 36rem) {
+    .flow { grid-template-columns: 1fr; }
+    .flow li, .flow li + li { padding-inline: 0; border-inline-end: 0; }
+  }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .split__media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 5; background: var(--midnight-800); }
+  .split__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .split .h2 { margin-bottom: 2rem; }
+  .check { list-style: none; margin: 0 0 2.5rem; padding: 0; display: grid; gap: 1rem; }
+  .check li { position: relative; padding-inline-start: 2.25rem; font-size: 1.125rem; }
+  .check li::before { content: ''; position: absolute; inset-inline-start: 0; top: 0.2em; width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 1px solid var(--midnight-600); }
+  .check li::after { content: ''; position: absolute; inset-inline-start: 0.42rem; top: 0.48em; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--midnight-600); }
+  .cost-title { margin: 2.5rem 0 1rem; }
+  @media (max-width: 56rem) { .split { grid-template-columns: 1fr; } .split__media { aspect-ratio: 16 / 10; } }
+</style>

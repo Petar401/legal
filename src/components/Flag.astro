@@ -1,0 +1,64 @@
+---
+// Hand-drawn flag SVGs. Inline, so they look the same on every device (flag emoji do not show on Windows).
+interface Props { code: 'gb' | 'bg' | 'ro' | 'tr' | 'kurdistan'; class?: string; size?: number }
+const { code, class: cls = '', size = 22 } = Astro.props;
+const uid = `f${Math.random().toString(36).slice(2, 8)}`;
+
+// 21 sun rays for the Kurdistan flag
+const rays = Array.from({ length: 21 }, (_, i) => {
+  const a = (i * 2 * Math.PI) / 21 - Math.PI / 2;
+  const half = Math.PI / 21 / 1.6;
+  const p = (r: number, ang: number) => `${(450 + r * Math.cos(ang)).toFixed(1)},${(300 + r * Math.sin(ang)).toFixed(1)}`;
+  return `${p(118, a)} ${p(72, a - half)} ${p(72, a + half)}`;
+});
+---
+<svg class={`flag ${cls}`} viewBox={code === 'gb' ? '0 0 60 40' : code === 'tr' ? '0 0 1200 800' : '0 0 900 600'} width={size * 1.5} height={size} aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">
+  {code === 'gb' && (
+    <>
+      <clipPath id={`${uid}t`}><path d="M30,20 h30 v20 z v20 h-30 z h-30 v-20 z v-20 h30 z" /></clipPath>
+      <rect width="60" height="40" fill="#012169" />
+      <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="7" />
+      <path d="M0,0 L60,40 M60,0 L0,40" clip-path={`url(#${uid}t)`} stroke="#C8102E" stroke-width="4" />
+      <path d="M30,0 v40 M0,20 h60" stroke="#fff" stroke-width="11" />
+      <path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="6.5" />
+    </>
+  )}
+  {code === 'bg' && (
+    <>
+      <rect width="900" height="200" fill="#fff" />
+      <rect y="200" width="900" height="200" fill="#00966E" />
+      <rect y="400" width="900" height="200" fill="#D62612" />
+    </>
+  )}
+  {code === 'ro' && (
+    <>
+      <rect width="300" height="600" fill="#002B7F" />
+      <rect x="300" width="300" height="600" fill="#FCD116" />
+      <rect x="600" width="300" height="600" fill="#CE1126" />
+    </>
+  )}
+  {code === 'tr' && (
+    <>
+      <rect width="1200" height="800" fill="#E30A17" />
+      <circle cx="425" cy="400" r="200" fill="#fff" />
+      <circle cx="475" cy="400" r="160" fill="#E30A17" />
+      <polygon fill="#fff" points="583.334,400 764.235,458.779 652.431,304.894 652.431,495.106 764.235,341.221" />
+    </>
+  )}
+  {code === 'kurdistan' && (
+    <>
+      <rect width="900" height="200" fill="#ED2024" />
+      <rect y="200" width="900" height="200" fill="#fff" />
+      <rect y="400" width="900" height="200" fill="#278E43" />
+      <g fill="#FEBD11">{rays.map((pts) => <polygon points={pts} />)}<circle cx="450" cy="300" r="78" /></g>
+    </>
+  )}
+</svg>
+
+<style>
+  .flag {
+    border-radius: 3px;
+    flex: none;
+    box-shadow: 0 0 0 1px rgba(14, 20, 36, 0.14), 0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+</style>

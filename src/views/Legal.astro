@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { photos } from '../config/photos';
+import { getDict, formatDate, type Locale } from '../i18n';
+import { rich } from '../lib/rich';
+
+type Kind = 'privacy' | 'cookies' | 'terms' | 'accessibility';
+interface Props { locale: Locale; kind: Kind }
+const { locale, kind } = Astro.props;
+const t = getDict(locale);
+const page = t[kind];
+const updated = new Date('2026-10-11');
+const label = { privacy: t.footer.privacy, cookies: t.footer.cookies, terms: t.footer.terms, accessibility: t.footer.accessibility }[kind];
+---
+<Base locale={locale} path={kind} title={page.title} description={page.description}>
+  <PageHead locale={locale} title={page.h1} crumbs={[{ label }]}>
+    <p class="updated">{page.updated}: <time datetime="2026-10-11">{formatDate(updated, locale)}</time></p>
+  </PageHead>
+  <section class="section">
+    <div class="wrap narrow prose legal">
+      {page.sections.map((s) => (
+        <section>
+          <h2>{s.h}</h2>
+          {s.p.map((p) => <p set:html={rich(p)} />)}
+        </section>
+      ))}
+      {kind === 'cookies' && <p><button type="button" class="btn btn--ink" data-cookie-open>{t.footer.cookieSettings}</button></p>}
+      {kind === 'accessibility' && (
+        <section>
+          <h2>{t.accessibility.creditsTitle}</h2>
+          <p>{t.accessibility.creditsText}</p>
+          <ul>
+            {Object.entries(photos).map(([key, p]) => (
+              <li><a href={p.page} rel="noopener" target="_blank">{t.photoAlt[key as keyof typeof photos]}</a>, <a href={p.authorUrl} rel="noopener" target="_blank" lang="en">{p.author}</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  </section>
+</Base>
+<style>
+  .updated { font-size: 0.875rem; color: var(--silver-400); margin-top: -0.5rem; }
+  .legal section + section { margin-top: 0.5rem; }
+  .legal h2:first-child { margin-top: 0; }
+</style>

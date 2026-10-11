@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://advice4you.vercel.app/sitemap-index.xml

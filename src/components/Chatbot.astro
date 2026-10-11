@@ -1,0 +1,260 @@
+---
+// A small helper that answers common questions from the FAQ data. No API, no tracking, nothing stored.
+import en from '../i18n/en';
+import { getDict, localePath, localeInfo, type Locale } from '../i18n';
+import { site, whatsappLink } from '../config/site';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+
+const data = {
+  lang: localeInfo[locale].htmlLang,
+  intents: t.bot.intents.map((it, i) => ({
+    id: it.id,
+    answer: it.answer,
+    link: it.link ? localePath(locale, it.link) : '',
+    // English keywords always work too, people often type in English
+    keywords: locale === 'en' ? it.keywords : [...it.keywords, ...(en.bot.intents[i]?.keywords ?? [])],
+  })),
+  fallback: t.bot.fallback,
+  readMore: t.cta.readMore,
+  contactPrompt: t.bot.contactPrompt,
+  contact: localePath(locale, 'contact'),
+  whatsapp: whatsappLink(t.contact.waPrefill),
+  whatsappLabel: t.cta.whatsapp,
+  email: `mailto:${site.email}`,
+  emailLabel: t.cta.email,
+  you: t.bot.youSaid,
+  bot: t.bot.botName,
+};
+---
+<div class="chat" data-chat>
+  <button class="chat__fab" type="button" aria-expanded="false" aria-controls="chat-panel" data-chat-toggle>
+    <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M8 26 Q32 8 56 26" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
+      <path d="M32 14 V50 M22 52 H42" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
+      <path d="M3 40 A7 6 0 0 0 17 40 Z M47 40 A7 6 0 0 0 61 40 Z" fill="currentColor" />
+      <path d="M10 26 L4 40 M10 26 L16 40 M54 26 L48 40 M54 26 L60 40" stroke="currentColor" stroke-width="1.6" />
+      <circle cx="32" cy="10" r="3.5" fill="currentColor" />
+    </svg>
+    <span class="chat__fab-label">{t.bot.open}</span>
+    <span class="visually-hidden">{t.bot.openLabel}</span>
+  </button>
+
+  <section id="chat-panel" class="chat__panel" role="dialog" aria-labelledby="chat-title" data-chat-panel>
+    <header class="chat__head">
+      <div>
+        <h2 id="chat-title" class="chat__title">{t.bot.title}</h2>
+        <p class="chat__note">{t.bot.note}</p>
+      </div>
+      <button type="button" class="chat__close" data-chat-close aria-label={t.bot.close}>
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2 12 12 M12 2 2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+      </button>
+    </header>
+
+    <div class="chat__log" role="log" aria-live="polite" aria-relevant="additions" data-chat-log>
+      <div class="msg msg--bot"><p>{t.bot.hello}</p></div>
+    </div>
+
+    <div class="chat__chips" data-chat-chips>
+      {t.bot.chips.map((c) => <button type="button" class="chip" data-intent={c.intent}>{c.label}</button>)}
+    </div>
+
+    <form class="chat__form" data-chat-form>
+      <label for="chat-input" class="visually-hidden">{t.bot.placeholder}</label>
+      <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" maxlength="200" placeholder={t.bot.placeholder} dir="auto" />
+      <button type="submit" class="chat__send" aria-label={t.bot.send}>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </button>
+    </form>
+  </section>
+  <script type="application/json" data-chat-data set:html={JSON.stringify(data)} />
+</div>
+
+<style>
+  .chat { position: fixed; z-index: 42; inset-inline-end: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .chat__fab {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    height: 3.25rem; padding: 0 1.2rem 0 1rem;
+    border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.18);
+    color: var(--silver-50);
+    background: linear-gradient(180deg, rgba(44, 67, 119, 0.92), rgba(11, 21, 48, 0.94));
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: 0 18px 40px -14px rgba(4, 7, 15, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    font: 600 0.875rem/1 var(--font-body);
+    cursor: pointer;
+    transition: transform 0.12s var(--ease-out), opacity 0.3s, visibility 0s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chat__fab:active { transform: scale(0.95); }
+  .chat[data-open] .chat__fab { opacity: 0; visibility: hidden; transform: scale(0.9); transition: opacity 0.2s, transform 0.3s, visibility 0s linear 0.3s; }
+
+  .chat__panel {
+    position: absolute;
+    inset-inline-end: 0;
+    bottom: 0;
+    width: min(24rem, calc(100vw - 2rem));
+    height: min(38rem, calc(100dvh - 6.5rem));
+    display: flex; flex-direction: column;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    color: var(--silver-100);
+    background: rgba(8, 14, 32, 0.9);
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    border: 1px solid rgba(232, 236, 242, 0.14);
+    box-shadow: 0 40px 80px -24px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform-origin: bottom right;
+    opacity: 0; visibility: hidden; transform: scale(0.6);
+    transition: opacity 0.25s var(--ease-out), transform 0.55s var(--spring), visibility 0s linear 0.55s;
+  }
+  :global([dir='rtl']) .chat__panel { transform-origin: bottom left; }
+  .chat[data-open] .chat__panel { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+
+  .chat__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 1.25rem 1.25rem 1rem; border-bottom: 1px solid rgba(188, 195, 208, 0.12); }
+  .chat__title { font-size: 1.5rem; color: var(--silver-50); }
+  :global(:lang(ckb)) .chat__title { font-size: 1.2rem; }
+  .chat__note { margin: 0.2rem 0 0; font-size: 0.75rem; color: var(--silver-400); }
+  .chat__close { width: 2.25rem; height: 2.25rem; border-radius: 50%; border: 1px solid rgba(232, 236, 242, 0.2); background: transparent; color: var(--silver-100); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .chat__close:hover { background: rgba(255, 255, 255, 0.08); }
+
+  .chat__log { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; overscroll-behavior: contain; }
+  .msg { max-width: 88%; padding: 0.7rem 0.95rem; border-radius: 1.1rem; font-size: 0.9rem; line-height: 1.5; animation: pop 0.45s var(--spring) both; }
+  .msg p { margin: 0; }
+  .msg--bot { align-self: flex-start; background: rgba(255, 255, 255, 0.07); border-end-start-radius: 0.35rem; }
+  .msg--you { align-self: flex-end; background: var(--silver-100); color: var(--ink); border-end-end-radius: 0.35rem; }
+  .msg :global(a) { color: var(--silver-50); font-weight: 600; }
+  .msg :global(.msg-actions) { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+  .msg :global(.msg-actions a) { display: inline-block; padding: 0.35rem 0.75rem; border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.3); font-size: 0.8rem; text-decoration: none; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(0.98); } }
+
+  .chat__chips { display: flex; gap: 0.4rem; padding: 0 1.25rem 0.85rem; overflow-x: auto; scrollbar-width: none; }
+  .chip { flex: none; padding: 0.45rem 0.85rem; border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.22); background: transparent; color: var(--silver-100); font: 500 0.8rem/1.2 var(--font-body); cursor: pointer; transition: background 0.2s, transform 0.1s; }
+  .chip:hover { background: rgba(255, 255, 255, 0.08); }
+  .chip:active { transform: scale(0.96); }
+
+  .chat__form { display: flex; gap: 0.5rem; padding: 0.85rem 1rem 1rem; border-top: 1px solid rgba(188, 195, 208, 0.12); }
+  .chat__form input { flex: 1; min-width: 0; height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.2); background: rgba(255, 255, 255, 0.05); color: var(--silver-50); font: 400 1rem/1 var(--font-body); }
+  .chat__form input::placeholder { color: var(--silver-500); }
+  .chat__form input:focus-visible { outline: 2px solid var(--silver-200); outline-offset: 1px; }
+  .chat__send { width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 0; background: var(--brushed); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none; }
+  :global([dir='rtl']) .chat__send svg { transform: scaleX(-1); }
+
+  @media (max-width: 40rem) {
+    :global(.has-cookie) .chat { display: none; }
+    .chat__fab-label { display: none; }
+    .chat__fab { width: 3.25rem; padding: 0; justify-content: center; }
+    .chat__panel { position: fixed; inset: auto 0.5rem 0.5rem; width: auto; height: min(36rem, calc(100dvh - 5.5rem)); }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .chat__panel, .chat__fab { background: var(--midnight-900); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+</style>
+
+<script>
+  type Intent = { id: string; answer: string; link: string; keywords: string[] };
+  type Data = {
+    lang: string; intents: Intent[]; fallback: string; readMore: string; contactPrompt: string;
+    contact: string; whatsapp: string; whatsappLabel: string; email: string; emailLabel: string; you: string; bot: string;
+  };
+
+  const root = document.querySelector<HTMLElement>('[data-chat]')!;
+  const toggle = root.querySelector<HTMLButtonElement>('[data-chat-toggle]')!;
+  const panel = root.querySelector<HTMLElement>('[data-chat-panel]')!;
+  const log = root.querySelector<HTMLElement>('[data-chat-log]')!;
+  const form = root.querySelector<HTMLFormElement>('[data-chat-form]')!;
+  const input = form.querySelector('input')!;
+  let data: Data | null = null;
+
+  const norm = (s: string, lang: string) =>
+    s.toLocaleLowerCase(lang).normalize('NFD').replace(/\p{M}/gu, '').replace(/ı/g, 'i').trim();
+
+  function match(text: string): Intent | null {
+    const d = data!;
+    const q = norm(text, d.lang);
+    const words = new Set(q.split(/[^\p{L}\p{N}]+/u).filter(Boolean));
+    let best: Intent | null = null;
+    let bestScore = 0;
+    for (const intent of d.intents) {
+      let score = 0;
+      for (const raw of intent.keywords) {
+        const k = norm(raw, d.lang);
+        if (!k) continue;
+        const hit = k.length <= 3 && !k.includes(' ') ? words.has(k) : q.includes(k);
+        if (hit) score += 10 + k.length;
+      }
+      // Broad topics only win when nothing more specific matches
+      if (['services', 'greeting', 'thanks'].includes(intent.id)) score *= 0.5;
+      if (score > bestScore) { bestScore = score; best = intent; }
+    }
+    return best;
+  }
+
+  function add(kind: 'bot' | 'you', text: string, actions: { href: string; label: string; external?: boolean }[] = []) {
+    const el = document.createElement('div');
+    el.className = `msg msg--${kind}`;
+    const who = document.createElement('span');
+    who.className = 'visually-hidden';
+    who.textContent = `${kind === 'you' ? data!.you : data!.bot}: `;
+    const p = document.createElement('p');
+    p.append(who, text);
+    el.append(p);
+    if (actions.length) {
+      const row = document.createElement('div');
+      row.className = 'msg-actions';
+      for (const a of actions) {
+        const link = document.createElement('a');
+        link.href = a.href;
+        link.textContent = a.label;
+        if (a.external) { link.target = '_blank'; link.rel = 'noopener'; }
+        row.append(link);
+      }
+      el.append(row);
+    }
+    // Copy the scoped style attribute so component styles apply to new nodes
+    const scope = [...log.attributes].find((a) => a.name.startsWith('data-astro-cid'));
+    if (scope) { el.setAttribute(scope.name, ''); p.setAttribute(scope.name, ''); }
+    log.append(el);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function reply(intent: Intent | null) {
+    const d = data!;
+    if (!intent) {
+      add('bot', d.fallback, [
+        { href: d.whatsapp, label: d.whatsappLabel, external: true },
+        { href: d.email, label: d.emailLabel },
+      ]);
+      return;
+    }
+    add('bot', intent.answer, intent.link ? [{ href: intent.link, label: d.readMore }] : []);
+  }
+
+  function setOpen(open: boolean) {
+    if (open && !data) data = JSON.parse(root.querySelector('[data-chat-data]')!.textContent!);
+    root.toggleAttribute('data-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) setTimeout(() => input.focus({ preventScroll: true }), 80);
+    else toggle.focus();
+  }
+
+  toggle.addEventListener('click', () => setOpen(true));
+  root.querySelector('[data-chat-close]')!.addEventListener('click', () => setOpen(false));
+  panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+  root.querySelectorAll<HTMLButtonElement>('[data-intent]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      add('you', chip.textContent!.trim());
+      reply(data!.intents.find((i) => i.id === chip.dataset.intent) ?? null);
+    }),
+  );
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    add('you', text);
+    input.value = '';
+    setTimeout(() => reply(match(text)), 280);
+  });
+</script>

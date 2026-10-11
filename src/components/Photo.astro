@@ -1,0 +1,30 @@
+---
+import { photos, photoUrl, photoSrcset, type PhotoKey } from '../config/photos';
+import { getDict, type Locale } from '../i18n';
+
+interface Props {
+  name: PhotoKey;
+  locale: Locale;
+  sizes?: string;
+  class?: string;
+  eager?: boolean;
+  decorative?: boolean;
+}
+const { name, locale, sizes = '100vw', class: cls = '', eager = false, decorative = false } = Astro.props;
+const p = photos[name];
+const t = getDict(locale);
+const width = 1600;
+const height = Math.round((p.h / p.w) * width);
+---
+<img
+  class={cls}
+  src={photoUrl(name, width)}
+  srcset={photoSrcset(name)}
+  sizes={sizes}
+  width={width}
+  height={height}
+  alt={decorative ? '' : t.photoAlt[name]}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding={eager ? 'sync' : 'async'}
+  fetchpriority={eager ? 'high' : 'auto'}
+/>

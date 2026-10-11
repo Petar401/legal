@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Photo from '../components/Photo.astro';
+import { getDict, localePath, formatDate, type Locale } from '../i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const b = t.blog;
+const posts = (await getCollection('blog', (e) => e.id.startsWith(`${locale}/`)))
+  .sort((a, z) => z.data.published.getTime() - a.data.published.getTime());
+---
+<Base locale={locale} path="blog" title={b.title} description={b.description}>
+  <PageHead locale={locale} kicker={b.kicker} title={b.h1} lead={b.lead} crumbs={[{ label: t.nav.blog }]} />
+  <section class="section">
+    <div class="wrap">
+      <ul class="posts" role="list">
+        {posts.map((p) => (
+          <li data-reveal>
+            <a class="post" href={localePath(locale, `blog/${p.id.split('/').slice(1).join('/')}`)}>
+              <div class="post__media"><Photo name={p.data.image} locale={locale} sizes="(min-width: 56rem) 50vw, 100vw" /></div>
+              <div class="post__text">
+                <p class="post__meta"><time datetime={p.data.published.toISOString().slice(0, 10)}>{formatDate(p.data.published, locale)}</time> · {p.data.readMinutes} {b.minRead}</p>
+                <h2 class="post__title">{p.data.title}</h2>
+                <p class="muted">{p.data.description}</p>
+                <span class="text-link">{t.cta.readJournal}</span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+<style>
+  .posts { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
+  .post { display: grid; grid-template-columns: 1.1fr 1fr; border-radius: var(--radius); overflow: hidden; background: var(--ivory-2); color: inherit; text-decoration: none; transition: transform 0.6s var(--ease-out), box-shadow 0.6s; }
+  .post:hover { transform: translateY(-3px); box-shadow: 0 40px 80px -50px rgba(14, 20, 36, 0.5); }
+  .post__media { position: relative; min-height: 22rem; background: var(--midnight-800); }
+  .post__media :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .post__text { padding: clamp(1.75rem, 4vw, 3.5rem); display: flex; flex-direction: column; justify-content: center; gap: 1rem; }
+  .post__meta { margin: 0; font-size: 0.8125rem; color: var(--ink-muted); }
+  .post__title { font-size: clamp(1.75rem, 3vw, 2.5rem); }
+  .post .text-link { align-self: flex-start; }
+  @media (max-width: 52rem) { .post { grid-template-columns: 1fr; } .post__media { min-height: 14rem; } }
+</style>

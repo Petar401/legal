@@ -1,0 +1,58 @@
+---
+import Base from '../layouts/Base.astro';
+import { allDicts, locales, localeInfo, localePath } from '../i18n';
+
+// One static 404 page. A small script switches the text to the visitor's language from the URL.
+const t = allDicts.en.notFound;
+const data = Object.fromEntries(locales.map((l) => [l, {
+  ...allDicts[l].notFound,
+  homeHref: localePath(l),
+  contactHref: localePath(l, 'contact'),
+  lang: localeInfo[l].htmlLang,
+  dir: localeInfo[l].dir,
+}]));
+---
+<Base locale="en" path="404" title={t.title} description={t.text} noindex>
+  <section class="nf dark">
+    <div class="nf__cone" aria-hidden="true"></div>
+    <div class="wrap nf__inner" data-nf>
+      <p class="nf__code" aria-hidden="true">404</p>
+      <h1 class="nf__title" data-k="h1">{t.h1}</h1>
+      <p class="lead" data-k="text">{t.text}</p>
+      <div class="nf__ctas">
+        <a class="btn" href="/" data-k="home" data-href="homeHref">{t.home}</a>
+        <a class="btn btn--ghost" href="/contact/" data-k="contact" data-href="contactHref">{t.contact}</a>
+      </div>
+    </div>
+  </section>
+  <script type="application/json" id="nf-data" set:html={JSON.stringify(data)} />
+</Base>
+
+<style>
+  .nf { position: relative; min-height: 100svh; display: grid; place-items: center; overflow: hidden; text-align: center; background: radial-gradient(70% 60% at 50% 0%, rgba(44, 67, 119, 0.55), transparent 70%), var(--midnight-950); }
+  .nf__cone { position: absolute; top: 0; left: 50%; width: 60rem; height: 100%; transform: translateX(-50%); background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 75%); clip-path: polygon(38% 0, 62% 0, 84% 100%, 16% 100%); pointer-events: none; }
+  .nf__inner { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: var(--header-h); }
+  .nf__code { font-family: var(--font-display); font-style: italic; font-size: clamp(7rem, 24vw, 16rem); line-height: 0.9; margin: 0 0 1rem; background: var(--brushed); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nf__title { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1.25rem; }
+  .nf .lead { margin-bottom: 2.5rem; }
+  .nf__ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+</style>
+
+<script>
+  const data = JSON.parse(document.getElementById('nf-data')!.textContent!);
+  const first = location.pathname.split('/').filter(Boolean)[0];
+  let saved: string | null = null;
+  try { saved = localStorage.getItem('a4y-lang'); } catch {}
+  const lang = data[first] ? first : saved && data[saved] ? saved : 'en';
+  if (lang !== 'en') {
+    const d = data[lang];
+    document.querySelectorAll<HTMLElement>('[data-nf] [data-k]').forEach((el) => {
+      el.textContent = d[el.dataset.k!];
+      if (el.dataset.href) (el as HTMLAnchorElement).href = d[el.dataset.href];
+    });
+    const root = document.querySelector<HTMLElement>('[data-nf]')!;
+    root.lang = d.lang;
+    root.dir = d.dir;
+    document.title = d.title;
+  }
+</script>

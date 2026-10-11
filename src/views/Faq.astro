@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getDict, type Locale } from '../i18n';
+import { rich, plain } from '../lib/rich';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const f = t.faq;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: f.items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: plain(i.a) } })),
+};
+---
+<Base locale={locale} path="faq" title={f.title} description={f.description} jsonLd={[ld]}>
+  <PageHead locale={locale} kicker={f.kicker} title={f.h1} lead={f.lead} crumbs={[{ label: t.nav.faq }]} />
+
+  <section class="section">
+    <div class="wrap narrow">
+      <div class="faq">
+        {f.items.map((i, n) => (
+          <details class="faq__item" open={n === 0}>
+            <summary>
+              <span class="faq__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
+              <span class="faq__q">{i.q}</span>
+              <span class="faq__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq__a"><p set:html={rich(i.a)} /></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand locale={locale} title={f.moreTitle} text={f.moreText} />
+</Base>
+
+<style>
+  .faq { border-top: 1px solid var(--ivory-line); }
+  .faq__item { border-bottom: 1px solid var(--ivory-line); }
+  .faq summary {
+    display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem; gap: 1rem; align-items: center;
+    padding: 1.6rem 0; cursor: pointer; list-style: none;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq__num { font-family: var(--font-display); font-style: italic; color: var(--ink-muted); }
+  .faq__q { font-family: var(--font-display); font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.25; }
+  :global(:lang(ckb)) .faq__q { font-size: 1.2rem; line-height: 1.6; }
+  .faq summary:hover .faq__q { color: var(--midnight-600); }
+  .faq__icon { position: relative; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--ivory-line); transition: background 0.3s, transform 0.5s var(--spring); }
+  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; margin: -0.75px 0 0 -6px; background: currentColor; transition: transform 0.5s var(--spring); }
+  .faq__icon::after { transform: rotate(90deg); }
+  details[open] .faq__icon { background: var(--ink); border-color: var(--ink); color: var(--silver-50); transform: rotate(180deg); }
+  details[open] .faq__icon::after { transform: rotate(0); }
+  .faq__a { padding: 0 3.5rem 1.75rem 3.5rem; color: var(--ink-soft); font-size: 1.0625rem; }
+  .faq__a :global(a) { color: var(--midnight-600); }
+  details::details-content { transition: content-visibility 0.45s allow-discrete, height 0.45s var(--ease-out); height: 0; overflow: clip; }
+  details[open]::details-content { height: auto; }
+  @media (max-width: 36rem) { .faq summary { grid-template-columns: 1.75rem minmax(0, 1fr) 2.5rem; } .faq__a { padding: 0 0 1.5rem 2.75rem; } :global([dir='rtl']) .faq__a { padding: 0 2.75rem 1.5rem 0; } }
+</style>

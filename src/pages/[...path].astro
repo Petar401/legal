@@ -1,0 +1,44 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { locales, defaultLocale, type Locale } from '../i18n';
+import Home from '../views/Home.astro';
+import Services from '../views/Services.astro';
+import How from '../views/How.astro';
+import About from '../views/About.astro';
+import Faq from '../views/Faq.astro';
+import Contact from '../views/Contact.astro';
+import BlogIndex from '../views/BlogIndex.astro';
+import Post from '../views/Post.astro';
+import Legal from '../views/Legal.astro';
+
+type View = 'home' | 'services' | 'how-it-works' | 'about' | 'faq' | 'contact' | 'blog' | 'privacy' | 'cookies' | 'terms' | 'accessibility' | 'post';
+type P = { locale: Locale; view: View; entry?: CollectionEntry<'blog'> };
+
+export async function getStaticPaths() {
+  const views: { slug: string; view: View }[] = [
+    { slug: '', view: 'home' },
+    ...(['services', 'how-it-works', 'about', 'faq', 'contact', 'blog', 'privacy', 'cookies', 'terms', 'accessibility'] as const).map((v) => ({ slug: v, view: v as View })),
+  ];
+  const posts = await getCollection('blog');
+  const join = (l: Locale, slug: string) => [l === defaultLocale ? '' : l, slug].filter(Boolean).join('/') || undefined;
+
+  return [
+    ...locales.flatMap((locale) => views.map(({ slug, view }) => ({ params: { path: join(locale, slug) }, props: { locale, view } }))),
+    ...posts.map((entry) => {
+      const [locale, ...rest] = entry.id.split('/');
+      return { params: { path: join(locale as Locale, `blog/${rest.join('/')}`) }, props: { locale: locale as Locale, view: 'post' as View, entry } };
+    }),
+  ];
+}
+
+const { locale, view, entry } = Astro.props as P;
+---
+{view === 'home' && <Home locale={locale} />}
+{view === 'services' && <Services locale={locale} />}
+{view === 'how-it-works' && <How locale={locale} />}
+{view === 'about' && <About locale={locale} />}
+{view === 'faq' && <Faq locale={locale} />}
+{view === 'contact' && <Contact locale={locale} />}
+{view === 'blog' && <BlogIndex locale={locale} />}
+{view === 'post' && entry && <Post locale={locale} entry={entry} />}
+{(view === 'privacy' || view === 'cookies' || view === 'terms' || view === 'accessibility') && <Legal locale={locale} kind={view} />}

@@ -1,0 +1,12 @@
+---
+// A small ornament drawn from the logo: the beam of the scales and its centre post.
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<svg class={`mark ${cls}`} width="56" height="18" viewBox="0 0 56 18" aria-hidden="true" focusable="false">
+  <path d="M4 14 Q28 -2 52 14" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+  <circle cx="28" cy="3.6" r="2" fill="currentColor" />
+  <circle cx="4" cy="14" r="1.4" fill="currentColor" />
+  <circle cx="52" cy="14" r="1.4" fill="currentColor" />
+</svg>
+<style>.mark { opacity: 0.7; }</style>

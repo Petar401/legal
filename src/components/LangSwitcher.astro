@@ -1,0 +1,148 @@
+---
+import Flag from './Flag.astro';
+import { locales, localeInfo, localePath, getDict, type Locale } from '../i18n';
+
+interface Props { locale: Locale; path: string; variant?: 'popover' | 'grid' }
+const { locale, path, variant = 'popover' } = Astro.props;
+const t = getDict(locale);
+const id = `lang-${variant}`;
+---
+{variant === 'popover' ? (
+  <div class="lang" data-lang>
+    <button class="lang__btn" type="button" aria-expanded="false" aria-controls={id} aria-label={`${t.a11y.language}: ${localeInfo[locale].english}`}>
+      <Flag code={localeInfo[locale].flag} size={14} />
+      <span class="lang__code" aria-hidden="true">{locale === 'ckb' ? 'SO' : locale === 'ku' ? 'KU' : locale.toUpperCase()}</span>
+      <svg class="lang__chev" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" /></svg>
+    </button>
+    <div class="lang__panel" id={id} data-panel>
+      <p class="lang__title">{t.a11y.chooseLanguage}</p>
+      <ul role="list">
+        {locales.map((l) => (
+          <li>
+            <a href={localePath(l, path)} hreflang={localeInfo[l].hreflang} lang={localeInfo[l].htmlLang} data-set-lang={l} aria-current={l === locale ? 'true' : undefined}>
+              <Flag code={localeInfo[l].flag} size={16} />
+              <span class="lang__name" dir={localeInfo[l].dir}>{localeInfo[l].name}{localeInfo[l].variant && <small> {localeInfo[l].variant}</small>}</span>
+              {l === locale && <svg class="lang__tick" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.5 6 10.5 11 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+) : (
+  <ul class="lang-grid" role="list">
+    {locales.map((l) => (
+      <li>
+        <a href={localePath(l, path)} hreflang={localeInfo[l].hreflang} lang={localeInfo[l].htmlLang} data-set-lang={l} aria-current={l === locale ? 'true' : undefined}>
+          <Flag code={localeInfo[l].flag} size={18} />
+          <span dir={localeInfo[l].dir}>{localeInfo[l].name}{localeInfo[l].variant && <small> {localeInfo[l].variant}</small>}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .lang { position: relative; }
+  .lang__btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    height: 2.5rem; padding: 0 0.85rem;
+    border-radius: 999px; border: 1px solid rgba(232, 236, 242, 0.22);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--silver-100);
+    font: 600 0.75rem/1 var(--font-body); letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, transform 0.1s;
+  }
+  .lang__btn:hover { background: rgba(255, 255, 255, 0.09); border-color: rgba(232, 236, 242, 0.45); }
+  .lang__btn:active { transform: scale(0.96); }
+  .lang__chev { opacity: 0.7; transition: transform 0.3s var(--ease-out); }
+  .lang__btn[aria-expanded='true'] .lang__chev { transform: rotate(180deg); }
+
+  .lang__panel {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + 0.75rem);
+    width: 17rem;
+    padding: 0.75rem;
+    border-radius: 1.1rem;
+    background: rgba(11, 21, 48, 0.86);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(232, 236, 242, 0.14);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform-origin: top right;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.94) translateY(-6px);
+    transition: opacity 0.22s var(--ease-out), transform 0.42s var(--spring), visibility 0s linear 0.42s;
+    z-index: 60;
+  }
+  :global([dir='rtl']) .lang__panel { transform-origin: top left; }
+  .lang[data-open] .lang__panel { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .lang__title {
+    margin: 0.25rem 0.6rem 0.6rem;
+    font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--silver-400);
+  }
+  :global(:lang(ckb)) .lang__title { letter-spacing: 0; font-size: 0.8125rem; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  .lang__panel a {
+    display: flex; align-items: center; gap: 0.85rem;
+    padding: 0.7rem 0.75rem; border-radius: 0.7rem;
+    color: var(--silver-100); text-decoration: none; font-size: 0.9375rem;
+    transition: background 0.2s;
+  }
+  .lang__panel a:hover, .lang__panel a:focus-visible { background: rgba(255, 255, 255, 0.08); }
+  .lang__panel a[aria-current] { background: rgba(255, 255, 255, 0.06); }
+  .lang__name { flex: 1; }
+  .lang__tick { color: var(--silver-200); }
+  small { color: var(--silver-400); font-size: 0.8em; margin-inline-start: 0.25rem; }
+  [lang='ckb'] { font-family: 'Vazirmatn Variable', Tahoma, sans-serif; }
+  /* Keep the Sorani label from loading the Arabic web font on other pages */
+  :global(:root:not(:lang(ckb))) [lang='ckb'] { font-family: Tahoma, 'Segoe UI', 'Noto Sans Arabic', 'Geeza Pro', sans-serif; }
+
+  .lang-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .lang-grid a {
+    display: flex; align-items: center; gap: 0.75rem;
+    min-height: 3.25rem; padding: 0.6rem 0.9rem;
+    border-radius: 0.9rem; border: 1px solid rgba(232, 236, 242, 0.14);
+    color: var(--silver-100); text-decoration: none; font-size: 0.9375rem;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .lang-grid a[aria-current] { border-color: rgba(232, 236, 242, 0.55); background: rgba(255, 255, 255, 0.08); }
+  .lang-grid small { display: block; margin: 0; }
+</style>
+
+<script>
+  const KEY = 'a4y-lang';
+  document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try { localStorage.setItem(KEY, a.dataset.setLang!); } catch {}
+    }),
+  );
+
+  document.querySelectorAll<HTMLElement>('[data-lang]').forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>('.lang__btn')!;
+    const panel = root.querySelector<HTMLElement>('[data-panel]')!;
+    const set = (open: boolean, focusBtn = false) => {
+      root.toggleAttribute('data-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) panel.querySelector<HTMLElement>('a[aria-current]')?.focus({ preventScroll: true });
+      else if (focusBtn) btn.focus();
+    };
+    btn.addEventListener('click', () => set(!root.hasAttribute('data-open')));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && root.hasAttribute('data-open')) { e.stopPropagation(); set(false, true); }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        const links = [...panel.querySelectorAll<HTMLElement>('a')];
+        const i = links.indexOf(document.activeElement as HTMLElement);
+        if (i === -1) return;
+        e.preventDefault();
+        links[(i + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length].focus();
+      }
+    });
+    document.addEventListener('pointerdown', (e) => { if (!root.contains(e.target as Node)) set(false); });
+    root.addEventListener('focusout', (e) => { if (!root.contains(e.relatedTarget as Node)) set(false); });
+  });
+</script>

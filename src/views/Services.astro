@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getDict, type Locale } from '../i18n';
+import { rich, plain } from '../lib/rich';
+import { site } from '../config/site';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const s = t.services;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: s.items.map((it, i) => ({
+    '@type': 'ListItem', position: i + 1,
+    item: { '@type': 'Service', name: it.title, description: plain(it.short), areaServed: 'Norfolk', provider: { '@id': `${site.url}/#organisation` } },
+  })),
+};
+---
+<Base locale={locale} path="services" title={s.title} description={s.description} jsonLd={[ld]}>
+  <PageHead locale={locale} kicker={s.kicker} title={s.h1} lead={s.lead} photo="broads" crumbs={[{ label: t.nav.services }]} />
+
+  <section class="section">
+    <div class="wrap">
+      <ol class="svc" role="list">
+        {s.items.map((it, i) => (
+          <li id={it.id} class="svc__item" data-reveal>
+            <span class="svc__num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="svc__head">
+              <h2 class="svc__title">{it.title}</h2>
+              <p class="svc__short">{it.short}</p>
+            </div>
+            <ul class="svc__points" role="list">{it.points.map((p) => <li set:html={rich(p)} />)}</ul>
+          </li>
+        ))}
+      </ol>
+
+      <aside class="limits" aria-labelledby="limits-title" data-reveal>
+        <h2 id="limits-title" class="h3">{s.limitsTitle}</h2>
+        <p>{s.limitsText}</p>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand locale={locale} />
+</Base>
+
+<style>
+  .svc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ivory-line); }
+  .svc__item {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 1rem 2.5rem;
+    padding: clamp(2rem, 4vw, 3.25rem) 0;
+    border-bottom: 1px solid var(--ivory-line);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  .svc__num { font-family: var(--font-display); font-style: italic; font-size: 1.25rem; color: var(--ink-muted); }
+  .svc__title { font-size: clamp(1.75rem, 3vw, 2.5rem); margin-bottom: 0.75rem; }
+  :global(:lang(ckb)) .svc__title { font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
+  .svc__short { color: var(--ink-soft); }
+  .svc__points { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
+  .svc__points li { position: relative; padding-inline-start: 1.5rem; color: var(--ink-soft); }
+  .svc__points li::before { content: ''; position: absolute; inset-inline-start: 0; top: 0.72em; width: 0.6rem; height: 1px; background: var(--midnight-600); }
+  .limits {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--silver-200);
+    max-width: 52rem;
+  }
+  .limits h2 { color: var(--silver-50); margin-bottom: 1rem; }
+  @media (max-width: 56rem) {
+    .svc__item { grid-template-columns: 2.5rem minmax(0, 1fr); }
+    .svc__points { grid-column: 2; }
+  }
+</style>

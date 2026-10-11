@@ -1,0 +1,28 @@
+---
+import { getDict, localePath, type Locale } from '../i18n';
+import { site, whatsappLink } from '../config/site';
+interface Props { locale: Locale; title?: string; text?: string }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const title = Astro.props.title ?? t.home.finalTitle;
+const text = Astro.props.text ?? t.home.finalText;
+---
+<section class="band dark" aria-labelledby="band-title">
+  <div class="wrap band__inner">
+    <div>
+      <h2 id="band-title" class="h2">{title}</h2>
+      <p class="lead">{text}</p>
+    </div>
+    <div class="band__ctas">
+      <a class="btn" href={whatsappLink(t.contact.waPrefill)} rel="noopener" target="_blank">{t.cta.whatsappLong}<span class="visually-hidden"> ({t.a11y.newTab})</span></a>
+      <a class="btn btn--ghost" href={localePath(locale, 'contact')}>{t.nav.contact}</a>
+    </div>
+  </div>
+</section>
+<style>
+  .band { position: relative; overflow: hidden; padding: clamp(4rem, 9vw, 7rem) 0; background: radial-gradient(80% 120% at 85% 0%, rgba(44, 67, 119, 0.55), transparent 60%), var(--midnight-950); }
+  .band__inner { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; align-items: end; }
+  .band .h2 { margin-bottom: 1rem; max-width: 18ch; }
+  .band__ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: flex-end; }
+  @media (max-width: 56rem) { .band__inner { grid-template-columns: 1fr; } .band__ctas { justify-content: flex-start; } }
+</style>
