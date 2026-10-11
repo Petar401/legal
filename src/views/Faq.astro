@@ -25,7 +25,7 @@ const ld = {
           <details class="faq__item" open={n === 0}>
             <summary>
               <span class="faq__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
-              <span class="faq__q">{i.q}</span>
+              <h2 class="faq__q">{i.q}</h2>
               <span class="faq__icon" aria-hidden="true"></span>
             </summary>
             <div class="faq__a"><p set:html={rich(i.a)} /></div>
@@ -47,8 +47,8 @@ const ld = {
   }
   .faq summary::-webkit-details-marker { display: none; }
   .faq__num { font-family: var(--font-display); font-style: italic; color: var(--ink-muted); }
-  .faq__q { font-family: var(--font-display); font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.25; }
-  :global(:lang(ckb)) .faq__q { font-size: 1.2rem; line-height: 1.6; }
+  .faq__q { font-family: var(--font-display); font-weight: 400; letter-spacing: normal; font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.25; }
+  :global(:lang(ckb)) .faq__q { font-weight: 400; font-size: 1.2rem; line-height: 1.6; }
   .faq summary:hover .faq__q { color: var(--midnight-600); }
   .faq__icon { position: relative; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--ivory-line); transition: background 0.3s, transform 0.5s var(--spring); }
   .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; margin: -0.75px 0 0 -6px; background: currentColor; transition: transform 0.5s var(--spring); }

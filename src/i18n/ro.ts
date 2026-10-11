@@ -271,6 +271,8 @@ const ro: Dict = {
     waLabel: 'WhatsApp',
     phoneLabel: 'Telefon',
     emailLabel: 'E-mail',
+    addressLabel: 'Adresă',
+    mapLabel: 'Deschide în Hărți',
     waPrefill: 'Bună ziua, Advice4you. Aș avea nevoie de ajutor.',
     tipsTitle: 'În primul mesaj',
     tips: [
@@ -404,7 +406,7 @@ const ro: Dict = {
       { id: 'work', keywords: ['national insurance', 'numar ni', 'job', 'munca', 'muncă', 'salariu', 'fluturas', 'fluturaș', 'banca', 'bancă', 'cont bancar', 'scoala', 'școală'], answer: 'Ajutăm cu numerele National Insurance, fluturașii de salariu, actele pentru bancă și locurile la școală.', link: 'services' },
       { id: 'letter', keywords: ['scrisoare', 'scrisori', 'formular', 'document', 'acte', 'hartie', 'hârtie', 'hartii', 'documente', 'formulare', 'amenda', 'amendă', 'termen'], answer: 'Aduceți-ne scrisoarea. O citim împreună, v-o explicăm în cuvinte simple și vă ajutăm să răspundeți înainte de termenul limită.', link: 'services' },
       { id: 'privacy', keywords: ['privat', 'confidential', 'confidențial', 'confidentialitate', 'confidențialitate', 'gdpr', 'date', 'secret', 'sigur', 'siguranta', 'siguranță'], answer: 'Folosim informațiile dumneavoastră doar ca să vă ajutăm. Nu le transmitem mai departe fără permisiunea dumneavoastră, decât dacă legea o cere.', link: 'privacy' },
-      { id: 'area', keywords: ['unde', 'norwich', 'norfolk', 'locatie', 'locație', 'adresa', 'adresă', 'birou', 'zona', 'zonă'], answer: 'Suntem din Norwich și ajutăm oameni din tot comitatul Norfolk. Stabilim împreună cum și unde ne întâlnim.', link: 'contact' },
+      { id: 'area', keywords: ['unde', 'norwich', 'norfolk', 'locatie', 'locație', 'adresa', 'adresă', 'birou', 'zona', 'zonă', 'program', 'harta', 'hartă', 'vizită'], answer: 'Adresa noastră: {address}. Ajutăm oameni din tot comitatul Norfolk. Vă rugăm să ne scrieți înainte de vizită, ca să stabilim ora.', link: 'contact' },
       { id: 'emergency', keywords: ['urgenta', 'urgență', 'pericol', 'urgent', '999', '111', 'politie', 'poliție', 'ambulanta', 'ambulanță', 'salvare', '112'], answer: 'Dacă viața cuiva este în pericol, sunați la 999. Pentru ajutor medical urgent care nu pune viața în pericol, sunați la NHS 111. Nu suntem un serviciu de urgență.', link: '' },
       { id: 'thanks', keywords: ['multumesc', 'mulțumesc', 'multumim', 'mulțumim', 'mersi', 'ok', 'pa', 'la revedere'], answer: 'Cu plăcere. Dacă aveți nevoie de mai mult ajutor, trimiteți-ne un mesaj.', link: '' },
     ],

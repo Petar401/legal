@@ -272,6 +272,8 @@ const en = {
     waLabel: 'WhatsApp',
     phoneLabel: 'Phone',
     emailLabel: 'Email',
+    addressLabel: 'Address',
+    mapLabel: 'Open in Maps',
     waPrefill: 'Hello Advice4you, I would like some help.',
     tipsTitle: 'In your first message',
     tips: [
@@ -405,7 +407,7 @@ const en = {
       { id: 'work', keywords: ['national insurance', 'ni number', 'job', 'work', 'payslip', 'bank', 'school'], answer: 'We help with National Insurance numbers, payslips, bank papers and school places.', link: 'services' },
       { id: 'letter', keywords: ['letter', 'form', 'document', 'paper', 'email from', 'fine', 'deadline'], answer: 'Bring us the letter. We read it with you, explain it in simple words and help you reply before the deadline.', link: 'services' },
       { id: 'privacy', keywords: ['private', 'privacy', 'data', 'confidential', 'secret', 'safe'], answer: 'We only use your information to help you. We do not share it without your permission, unless the law requires it.', link: 'privacy' },
-      { id: 'area', keywords: ['where', 'norwich', 'norfolk', 'location', 'address', 'office', 'area'], answer: 'We are based in Norwich and help people across Norfolk. We agree together how and where to meet.', link: 'contact' },
+      { id: 'area', keywords: ['where', 'norwich', 'norfolk', 'location', 'address', 'office', 'area', 'hours', 'opening hours', 'directions', 'map', 'visit', 'street'], answer: 'Our address: {address}. We help people across Norfolk. Please message us before you visit, so we can agree a time.', link: 'contact' },
       { id: 'emergency', keywords: ['emergency', 'danger', 'urgent', '999', '111', 'police', 'ambulance'], answer: 'If a life is in danger, call 999. For urgent medical help that is not an emergency, call NHS 111. We are not an emergency service.', link: '' },
       { id: 'thanks', keywords: ['thank', 'thanks', 'ok', 'bye'], answer: 'You are welcome. If you need more help, send us a message.', link: '' },
     ],

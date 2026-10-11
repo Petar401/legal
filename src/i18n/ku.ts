@@ -271,6 +271,8 @@ const ku: Dict = {
     waLabel: 'WhatsApp',
     phoneLabel: 'Telefon',
     emailLabel: 'E-name',
+    addressLabel: 'Navnîşan',
+    mapLabel: 'Di Nexşeyê de veke',
     waPrefill: 'Silav Advice4you, ez alîkariyê dixwazim.',
     tipsTitle: 'Di peyama xwe ya yekem de',
     tips: [
@@ -404,7 +406,7 @@ const ku: Dict = {
       { id: 'work', keywords: ['national insurance', 'ni number', 'kar', 'karê', 'xebat', 'mûçe', 'bank', 'dibistan', 'sigorta'], answer: 'Em di mijarên hejmara National Insurance, kaxeza mûçeyê, kaxezên bankê û cihê dibistanê de alîkar in.', link: 'services' },
       { id: 'letter', keywords: ['name', 'form', 'belge', 'kaxez', 'ceza', 'mohlet', 'termîn', 'fêm nakim', 'bixwînim'], answer: 'Nameyê bînin ba me. Em bi we re dixwînin, bi peyvên hêsan rave dikin û alîkariya we dikin ku hûn berî ku mohlet biqede bersivê bidin.', link: 'services' },
       { id: 'privacy', keywords: ['taybet', 'nepenî', 'agahî', 'veşart', 'ewle', 'parastin', 'sir'], answer: 'Em agahiyên we tenê ji bo alîkariya we bikar tînin. Em bê destûra we wan parve nakin, ji bilî dema ku qanûn ji me bixwaze.', link: 'privacy' },
-      { id: 'area', keywords: ['li ku', 'kuderê', 'norwich', 'norfolk', 'cihê', 'navnîşan', 'ofîs', 'nivîsgeh', 'herêm', 'bajar'], answer: 'Em li Norwichê ne û li seranserê Norfolkê alîkariya mirovan dikin. Em bi hev re li hev dikin ka çawa û li ku hev bibînin.', link: 'contact' },
+      { id: 'area', keywords: ['li ku', 'kuderê', 'norwich', 'norfolk', 'cihê', 'navnîşan', 'ofîs', 'nivîsgeh', 'herêm', 'bajar', 'saet', 'nexşe', 'serdan'], answer: 'Navnîşana me: {address}. Em li seranserê Norfolkê alîkariya mirovan dikin. Berî ku werin, ji me re binivîsin da ku em bi hev re demekê diyar bikin.', link: 'contact' },
       { id: 'emergency', keywords: ['lezgîn', 'acîl', 'awarte', 'xeter', 'bilez', '999', '111', 'polîs', 'ambulans'], answer: 'Heke jiyana kesekî di xetereyê de be, gazî 999 bikin. Ji bo alîkariya bijîşkî ya bilez a ku ne rewşeke lezgîn e, gazî NHS 111 bikin. Em ne karûbarê rewşên lezgîn in.', link: '' },
       { id: 'thanks', keywords: ['spas', 'sipas', 'sax be', 'xatirê', 'temam', 'ok'], answer: 'Bi kêfxweşî. Heke hûn alîkariya zêdetir hewce bikin, peyamekê ji me re bişînin.', link: '' },
     ],

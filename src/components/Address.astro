@@ -1,0 +1,9 @@
+---
+// The business address as a proper <address>. The text stays left-to-right inside right-to-left pages.
+import { site } from '../config/site';
+const { street, locality, postcode } = site.address;
+---
+<address class="address"><bdi dir="ltr">{street}<br />{[locality, postcode].filter(Boolean).join(', ')}</bdi></address>
+<style>
+  .address { font-style: normal; }
+</style>

@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { getDict, type Locale } from '../i18n';
+import { getDict, localePath, type Locale } from '../i18n';
 import { rich, plain } from '../lib/rich';
 import { site } from '../config/site';
 
@@ -15,7 +15,7 @@ const ld = {
   '@type': 'ItemList',
   itemListElement: s.items.map((it, i) => ({
     '@type': 'ListItem', position: i + 1,
-    item: { '@type': 'Service', name: it.title, description: plain(it.short), areaServed: 'Norfolk', provider: { '@id': `${site.url}/#organisation` } },
+    item: { '@type': 'Service', '@id': `${site.url}${localePath(locale, 'services')}#${it.id}`, url: `${site.url}${localePath(locale, 'services')}#${it.id}`, name: it.title, description: plain(it.short), areaServed: { '@type': 'AdministrativeArea', name: 'Norfolk' }, provider: { '@id': `${site.url}/#organisation` } },
   })),
 };
 ---
