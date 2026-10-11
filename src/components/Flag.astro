@@ -7,9 +7,10 @@ const uid = `f${Math.random().toString(36).slice(2, 8)}`;
 // 21 sun rays for the Kurdistan flag
 const rays = Array.from({ length: 21 }, (_, i) => {
   const a = (i * 2 * Math.PI) / 21 - Math.PI / 2;
-  const half = Math.PI / 21 / 1.6;
+  // Broad rays that reach into the red and green bands, so the sun still reads at 14px
+  const half = (Math.PI / 21) * 0.78;
   const p = (r: number, ang: number) => `${(450 + r * Math.cos(ang)).toFixed(1)},${(300 + r * Math.sin(ang)).toFixed(1)}`;
-  return `${p(118, a)} ${p(72, a - half)} ${p(72, a + half)}`;
+  return `${p(168, a)} ${p(70, a - half)} ${p(70, a + half)}`;
 });
 ---
 <svg class={`flag ${cls}`} viewBox={code === 'gb' ? '0 0 60 40' : code === 'tr' ? '0 0 1200 800' : '0 0 900 600'} width={size * 1.5} height={size} aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">
@@ -50,7 +51,7 @@ const rays = Array.from({ length: 21 }, (_, i) => {
       <rect width="900" height="200" fill="#ED2024" />
       <rect y="200" width="900" height="200" fill="#fff" />
       <rect y="400" width="900" height="200" fill="#278E43" />
-      <g fill="#FEBD11">{rays.map((pts) => <polygon points={pts} />)}<circle cx="450" cy="300" r="78" /></g>
+      <g fill="#FEBD11">{rays.map((pts) => <polygon points={pts} />)}<circle cx="450" cy="300" r="84" /></g>
     </>
   )}
 </svg>

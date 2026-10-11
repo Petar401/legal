@@ -16,7 +16,7 @@ import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import Chatbot from '../components/Chatbot.astro';
 import { getDict, localeInfo, localePath, type Locale } from '../i18n';
-import { site } from '../config/site';
+import { organisation, website, webPage } from '../lib/schema';
 
 interface Props {
   locale: Locale;
@@ -27,30 +27,21 @@ interface Props {
   type?: 'website' | 'article';
   jsonLd?: object[];
   noindex?: boolean;
+  imageAlt?: string;
+  published?: string;
+  modified?: string;
   preloadImage?: { href: string; srcset: string; sizes: string };
 }
 
-const { locale, path, title, description, image, type, jsonLd = [], noindex, preloadImage } = Astro.props;
+const { locale, path, title, description, image, type, jsonLd = [], noindex, preloadImage, imageAlt, published, modified } = Astro.props;
 const info = localeInfo[locale];
 const t = getDict(locale);
 
-const organisation = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  '@id': `${site.url}/#organisation`,
-  name: site.name,
-  url: site.url + localePath(locale),
-  logo: `${site.url}/icon-512.png`,
-  image: `${site.url}/og/advice4you.jpg`,
-  description: t.meta.defaultDescription,
-  email: site.email,
-  telephone: site.phoneDisplay,
-  areaServed: [
-    { '@type': 'City', name: 'Norwich' },
-    { '@type': 'AdministrativeArea', name: 'Norfolk' },
-  ],
-  knowsLanguage: ['en', 'bg', 'ro', 'tr', 'ku', 'ckb'],
-};
+const graph = [
+  organisation(t.meta.defaultDescription),
+  website(),
+  ...(noindex ? [] : [webPage(locale, path, title, description)]),
+];
 ---
 <!doctype html>
 <html lang={info.htmlLang} dir={info.dir}>
@@ -77,7 +68,7 @@ const organisation = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <Seo locale={locale} path={path} title={title} description={description} image={image} type={type} noindex={noindex} jsonLd={[organisation, ...jsonLd]} />
+    <Seo locale={locale} path={path} title={title} description={description} image={image} type={type} noindex={noindex} imageAlt={imageAlt} published={published} modified={modified} jsonLd={[...graph, ...jsonLd]} />
   </head>
   <body>
     <a class="skip-link" href="#main">{t.a11y.skip}</a>
@@ -87,7 +78,7 @@ const organisation = {
     </main>
     <Footer locale={locale} />
     <CookieBanner locale={locale} />
-    <Chatbot locale={locale} />
+    <Chatbot locale={locale} adaptive={path === '404'} />
 
     <script>
       // Gentle reveal as sections enter the viewport. Content is visible if this never runs.

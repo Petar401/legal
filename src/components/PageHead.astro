@@ -2,12 +2,17 @@
 import Photo from './Photo.astro';
 import type { PhotoKey } from '../config/photos';
 import { getDict, localePath, type Locale } from '../i18n';
+import { site } from '../config/site';
+import { breadcrumbs } from '../lib/schema';
 
 interface Props { locale: Locale; kicker?: string; title: string; lead?: string; photo?: PhotoKey; crumbs?: { label: string; href?: string }[] }
 const { locale, kicker, title, lead, photo, crumbs = [] } = Astro.props;
 const t = getDict(locale);
 const trail = [{ label: t.nav.home, href: localePath(locale) }, ...crumbs];
+const abs = (href?: string) => site.url + (href ?? Astro.url.pathname);
+const crumbLd = breadcrumbs(trail.map((c) => ({ name: c.label, url: abs(c.href) })));
 ---
+<script type="application/ld+json" set:html={JSON.stringify(crumbLd)} />
 <section class="head dark">
   {photo && <div class="head__photo" aria-hidden="true"><Photo name={photo} locale={locale} eager decorative sizes="100vw" /></div>}
   <div class="head__veil" aria-hidden="true"></div>

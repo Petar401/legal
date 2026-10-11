@@ -8,8 +8,9 @@ It is a static site built with [Astro](https://astro.build). It is available in 
 
 | What | Where |
 | --- | --- |
-| Email, phone, WhatsApp number | `src/config/site.ts` |
-| Your own domain | `src/config/site.ts`, `astro.config.mjs` (`SITE`) and `public/robots.txt` |
+| Email (empty until set, so email links stay hidden), postcode, opening hours | `src/config/site.ts` |
+| Phone and WhatsApp (set: 07466 951175) and address (set: 73A Dereham Road) | `src/config/site.ts` |
+| Your own domain | `src/config/site.ts` only. The sitemap, `robots.txt`, `llms.txt` and structured data read it from there |
 
 Also check that these statements describe how you work. They appear on the site:
 

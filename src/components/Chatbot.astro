@@ -1,35 +1,23 @@
 ---
-// A small helper that answers common questions from the FAQ data. No API, no tracking, nothing stored.
+// A small helper that answers common questions from the FAQ data. No AI, no tracking, nothing stored.
+// The page's own language is built into the page. The other languages load the first time the chat opens,
+// so a question typed in any of the six languages gets an answer, on any page.
 import en from '../i18n/en';
-import { getDict, localePath, localeInfo, type Locale } from '../i18n';
-import { site, whatsappLink } from '../config/site';
+import { getDict, locales, type Locale } from '../i18n';
+import { chatBundle } from '../lib/chat';
 
-interface Props { locale: Locale }
-const { locale } = Astro.props;
+interface Props { locale: Locale; adaptive?: boolean }
+const { locale, adaptive = false } = Astro.props;
 const t = getDict(locale);
 
-const data = {
-  lang: localeInfo[locale].htmlLang,
-  intents: t.bot.intents.map((it, i) => ({
-    id: it.id,
-    answer: it.answer,
-    link: it.link ? localePath(locale, it.link) : '',
-    // English keywords always work too, people often type in English
-    keywords: locale === 'en' ? it.keywords : [...it.keywords, ...(en.bot.intents[i]?.keywords ?? [])],
-  })),
-  fallback: t.bot.fallback,
-  readMore: t.cta.readMore,
-  contactPrompt: t.bot.contactPrompt,
-  contact: localePath(locale, 'contact'),
-  whatsapp: whatsappLink(t.contact.waPrefill),
-  whatsappLabel: t.cta.whatsapp,
-  email: `mailto:${site.email}`,
-  emailLabel: t.cta.email,
-  you: t.bot.youSaid,
-  bot: t.bot.botName,
-};
+// English keywords always work too, people often type in English
+const bundle = chatBundle(locale);
+if (locale !== 'en') {
+  bundle.intents.forEach((it, i) => { it.keywords = [...it.keywords, ...(en.bot.intents[i]?.keywords ?? [])]; });
+}
+const data = { ...bundle, page: locale, adaptive, all: locales };
 ---
-<div class="chat" data-chat>
+<div class="chat" data-chat lang={bundle.lang} dir={bundle.dir}>
   <button class="chat__fab" type="button" aria-expanded="false" aria-controls="chat-panel" data-chat-toggle>
     <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">
       <path d="M8 26 Q32 8 56 26" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" />
@@ -38,23 +26,23 @@ const data = {
       <path d="M10 26 L4 40 M10 26 L16 40 M54 26 L48 40 M54 26 L60 40" stroke="currentColor" stroke-width="1.6" />
       <circle cx="32" cy="10" r="3.5" fill="currentColor" />
     </svg>
-    <span class="chat__fab-label">{t.bot.open}</span>
-    <span class="visually-hidden">{t.bot.openLabel}</span>
+    <span class="chat__fab-label" data-ui="open">{t.bot.open}</span>
+    <span class="visually-hidden" data-ui="openLabel">{t.bot.openLabel}</span>
   </button>
 
   <section id="chat-panel" class="chat__panel" role="dialog" aria-labelledby="chat-title" data-chat-panel>
     <header class="chat__head">
       <div>
-        <h2 id="chat-title" class="chat__title">{t.bot.title}</h2>
-        <p class="chat__note">{t.bot.note}</p>
+        <h2 id="chat-title" class="chat__title" data-ui="title">{t.bot.title}</h2>
+        <p class="chat__note" data-ui="note">{t.bot.note}</p>
       </div>
-      <button type="button" class="chat__close" data-chat-close aria-label={t.bot.close}>
+      <button type="button" class="chat__close" data-chat-close aria-label={t.bot.close} data-ui-label="close">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2 12 12 M12 2 2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
       </button>
     </header>
 
     <div class="chat__log" role="log" aria-live="polite" aria-relevant="additions" data-chat-log>
-      <div class="msg msg--bot"><p>{t.bot.hello}</p></div>
+      <div class="msg msg--bot"><p data-ui="hello">{t.bot.hello}</p></div>
     </div>
 
     <div class="chat__chips" data-chat-chips>
@@ -62,9 +50,9 @@ const data = {
     </div>
 
     <form class="chat__form" data-chat-form>
-      <label for="chat-input" class="visually-hidden">{t.bot.placeholder}</label>
+      <label for="chat-input" class="visually-hidden" data-ui="placeholder">{t.bot.placeholder}</label>
       <input id="chat-input" type="text" autocomplete="off" enterkeyhint="send" maxlength="200" placeholder={t.bot.placeholder} dir="auto" />
-      <button type="submit" class="chat__send" aria-label={t.bot.send}>
+      <button type="submit" class="chat__send" aria-label={t.bot.send} data-ui-label="send">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
@@ -150,54 +138,92 @@ const data = {
     .chat__panel, .chat__fab { background: var(--midnight-900); -webkit-backdrop-filter: none; backdrop-filter: none; }
   }
 </style>
-
 <script>
   type Intent = { id: string; answer: string; link: string; keywords: string[] };
-  type Data = {
-    lang: string; intents: Intent[]; fallback: string; readMore: string; contactPrompt: string;
-    contact: string; whatsapp: string; whatsappLabel: string; email: string; emailLabel: string; you: string; bot: string;
+  type Bundle = {
+    lang: string; dir: 'ltr' | 'rtl';
+    ui: { open: string; openLabel: string; title: string; note: string; hello: string; placeholder: string; send: string; close: string; chips: { label: string; intent: string }[] };
+    intents: Intent[]; fallback: string; readMore: string; contactPrompt: string; contact: string;
+    whatsapp: string; whatsappLabel: string; email: string; emailLabel: string; you: string; bot: string;
   };
+  type Data = Bundle & { page: string; adaptive: boolean; all: string[] };
 
   const root = document.querySelector<HTMLElement>('[data-chat]')!;
   const toggle = root.querySelector<HTMLButtonElement>('[data-chat-toggle]')!;
   const panel = root.querySelector<HTMLElement>('[data-chat-panel]')!;
   const log = root.querySelector<HTMLElement>('[data-chat-log]')!;
+  const chips = root.querySelector<HTMLElement>('[data-chat-chips]')!;
   const form = root.querySelector<HTMLFormElement>('[data-chat-form]')!;
   const input = form.querySelector('input')!;
   let data: Data | null = null;
+  // Every language, filled in from /chat-data.json. Until then the page's own language answers.
+  let bundles: Record<string, Bundle> = {};
+  let loading: Promise<void> | null = null;
+  let order: string[] = [];
+  let uiLocale = '';
 
-  const norm = (s: string, lang: string) =>
-    s.toLocaleLowerCase(lang).normalize('NFD').replace(/\p{M}/gu, '').replace(/ı/g, 'i').trim();
+  // Fold spelling variants so keyboards and writing habits do not matter:
+  // accents and Turkish dotless i, Arabic and Persian letter forms for Sorani, joiners, Arabic-Indic digits.
+  const norm = (s: string) =>
+    s.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+      .replace(/ı/g, 'i')
+      .replace(/[‌‍ـ]/g, '')
+      .replace(/[يىێ]/g, 'ی').replace(/ك/g, 'ک').replace(/[هة]/g, 'ە')
+      .replace(/ڕ/g, 'ر').replace(/ڵ/g, 'ل').replace(/ۆ/g, 'و')
+      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660))
+      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x6f0))
+      .trim();
 
-  function match(text: string): Intent | null {
-    const d = data!;
-    const q = norm(text, d.lang);
+  const kwCache = new WeakMap<Intent, string[]>();
+  const keywordsOf = (intent: Intent) => {
+    let k = kwCache.get(intent);
+    if (!k) { k = intent.keywords.map(norm).filter(Boolean); kwCache.set(intent, k); }
+    return k;
+  };
+
+  function score(intent: Intent, q: string, words: Set<string>) {
+    let total = 0;
+    for (const k of keywordsOf(intent)) {
+      const hit = k.length <= 3 && !k.includes(' ') ? words.has(k) : q.includes(k);
+      if (hit) total += 10 + k.length;
+    }
+    // Broad topics only win when nothing more specific matches
+    if (['services', 'greeting', 'thanks'].includes(intent.id)) total *= 0.5;
+    return total;
+  }
+
+  // Best answer across all languages. The page's language wins ties and gets a small head start.
+  function match(text: string): { intent: Intent; locale: string } | null {
+    const q = norm(text);
     const words = new Set(q.split(/[^\p{L}\p{N}]+/u).filter(Boolean));
-    let best: Intent | null = null;
+    let best: { intent: Intent; locale: string } | null = null;
     let bestScore = 0;
-    for (const intent of d.intents) {
-      let score = 0;
-      for (const raw of intent.keywords) {
-        const k = norm(raw, d.lang);
-        if (!k) continue;
-        const hit = k.length <= 3 && !k.includes(' ') ? words.has(k) : q.includes(k);
-        if (hit) score += 10 + k.length;
+    for (const l of order) {
+      const b = bundles[l];
+      if (!b) continue;
+      const boost = l === data!.page ? 1.2 : 1;
+      for (const intent of b.intents) {
+        const sc = score(intent, q, words) * boost;
+        if (sc > bestScore) { bestScore = sc; best = { intent, locale: l }; }
       }
-      // Broad topics only win when nothing more specific matches
-      if (['services', 'greeting', 'thanks'].includes(intent.id)) score *= 0.5;
-      if (score > bestScore) { bestScore = score; best = intent; }
     }
     return best;
   }
 
-  function add(kind: 'bot' | 'you', text: string, actions: { href: string; label: string; external?: boolean }[] = []) {
+  // For a question we cannot answer: reply in the script it was typed in, otherwise the page language.
+  const guessLocale = (text: string) =>
+    /[Ѐ-ӿ]/.test(text) && bundles.bg ? 'bg' : /[؀-ۿ]/.test(text) && bundles.ckb ? 'ckb' : data!.page;
+
+  function add(kind: 'bot' | 'you', text: string, b: Bundle, actions: { href: string; label: string; external?: boolean }[] = []) {
     const el = document.createElement('div');
     el.className = `msg msg--${kind}`;
     const who = document.createElement('span');
     who.className = 'visually-hidden';
-    who.textContent = `${kind === 'you' ? data!.you : data!.bot}: `;
+    who.textContent = `${kind === 'you' ? b.you : b.bot}: `;
     const p = document.createElement('p');
     p.append(who, text);
+    // Each message carries its own language and direction, so a Sorani answer on an English page reads correctly
+    if (kind === 'bot') { el.lang = b.lang; el.dir = b.dir; } else { p.dir = 'auto'; }
     el.append(p);
     if (actions.length) {
       const row = document.createElement('div');
@@ -218,20 +244,69 @@ const data = {
     log.scrollTop = log.scrollHeight;
   }
 
-  function reply(intent: Intent | null) {
-    const d = data!;
-    if (!intent) {
-      add('bot', d.fallback, [
-        { href: d.whatsapp, label: d.whatsappLabel, external: true },
-        { href: d.email, label: d.emailLabel },
+  function reply(found: { intent: Intent; locale: string } | null, text = '') {
+    if (!found) {
+      const b = bundles[guessLocale(text)] ?? bundles[data!.page];
+      add('bot', b.fallback, b, [
+        { href: b.contact, label: b.contactPrompt },
+        { href: b.whatsapp, label: b.whatsappLabel, external: true },
+        ...(b.email ? [{ href: b.email, label: b.emailLabel }] : []),
       ]);
       return;
     }
-    add('bot', intent.answer, intent.link ? [{ href: intent.link, label: d.readMore }] : []);
+    const b = bundles[found.locale];
+    add('bot', found.intent.answer, b, found.intent.link ? [{ href: found.intent.link, label: b.readMore }] : []);
+  }
+
+  function loadAll(): Promise<void> {
+    loading ??= fetch('/chat-data.json', { credentials: 'omit' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((all: Record<string, Bundle>) => {
+        // Keep the page's own bundle (it already carries the English keywords as a bonus)
+        bundles = { ...all, [data!.page]: bundles[data!.page] };
+        order = [data!.page, 'en', ...data!.all.filter((l) => l !== data!.page && l !== 'en')];
+      })
+      .catch(() => { /* offline or blocked: the page's own language still answers */ });
+    return loading;
+  }
+
+  // Translate the chat's own words (the 404 page serves every language from one file)
+  function applyUi(l: string) {
+    const b = bundles[l];
+    if (!b || uiLocale === l) return;
+    uiLocale = l;
+    root.lang = b.lang; root.dir = b.dir;
+    root.querySelectorAll<HTMLElement>('[data-ui]').forEach((el) => { el.textContent = b.ui[el.dataset.ui as 'title'] as string; });
+    root.querySelector('[data-ui-label="close"]')!.setAttribute('aria-label', b.ui.close);
+    root.querySelector('[data-ui-label="send"]')!.setAttribute('aria-label', b.ui.send);
+    input.placeholder = b.ui.placeholder;
+    chips.replaceChildren(...b.ui.chips.map((c) => {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'chip'; btn.dataset.intent = c.intent; btn.textContent = c.label;
+      const scope = [...chips.attributes].find((a) => a.name.startsWith('data-astro-cid'));
+      if (scope) btn.setAttribute(scope.name, '');
+      return btn;
+    }));
   }
 
   function setOpen(open: boolean) {
-    if (open && !data) data = JSON.parse(root.querySelector('[data-chat-data]')!.textContent!);
+    if (open && !data) {
+      data = JSON.parse(root.querySelector('[data-chat-data]')!.textContent!);
+      bundles = { [data!.page]: data as Bundle };
+      order = [data!.page];
+      loadAll().then(() => {
+        if (!data!.adaptive) return;
+        // The 404 page picks its language from the URL or the saved choice, the same way its text does
+        const first = location.pathname.split('/').filter(Boolean)[0];
+        let saved: string | null = null;
+        try { saved = localStorage.getItem('a4y-lang'); } catch {}
+        const has = (k: string | null): k is string => !!k && Object.prototype.hasOwnProperty.call(bundles, k);
+        const l = has(first) ? first : has(saved) ? saved : data!.page;
+        data!.page = l;
+        order = [l, 'en', ...data!.all.filter((x) => x !== l && x !== 'en')];
+        applyUi(l);
+      });
+    }
     root.toggleAttribute('data-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     if (open) setTimeout(() => input.focus({ preventScroll: true }), 80);
@@ -242,19 +317,23 @@ const data = {
   root.querySelector('[data-chat-close]')!.addEventListener('click', () => setOpen(false));
   panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  root.querySelectorAll<HTMLButtonElement>('[data-intent]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      add('you', chip.textContent!.trim());
-      reply(data!.intents.find((i) => i.id === chip.dataset.intent) ?? null);
-    }),
-  );
+  // Chips are rebuilt on the 404 page, so listen on the container
+  chips.addEventListener('click', (e) => {
+    const chip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-intent]');
+    if (!chip) return;
+    const b = bundles[data!.page];
+    add('you', chip.textContent!.trim(), b);
+    const intent = b.intents.find((i) => i.id === chip.dataset.intent);
+    reply(intent ? { intent, locale: data!.page } : null);
+  });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
-    add('you', text);
+    add('you', text, bundles[data!.page]);
     input.value = '';
-    setTimeout(() => reply(match(text)), 280);
+    await Promise.all([loadAll(), new Promise((r) => setTimeout(r, 280))]);
+    reply(match(text), text);
   });
 </script>

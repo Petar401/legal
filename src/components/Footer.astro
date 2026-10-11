@@ -1,7 +1,8 @@
 ---
 import Wordmark from './Wordmark.astro';
 import { getDict, localePath, type Locale } from '../i18n';
-import { site, whatsappLink } from '../config/site';
+import { site, hasEmail, mapsUrl, whatsappLink } from '../config/site';
+import Address from './Address.astro';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -36,7 +37,11 @@ const year = new Date().getFullYear();
           <ul role="list">
             <li><a href={whatsappLink(t.contact.waPrefill)} rel="noopener" target="_blank">{t.cta.whatsapp}<span class="visually-hidden"> ({t.a11y.newTab})</span></a></li>
             <li><a href={`tel:${site.phoneHref}`} dir="ltr">{site.phoneDisplay}</a></li>
-            <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+            {hasEmail && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+            <li class="addr">
+              <Address />
+              <a href={mapsUrl} rel="noopener" target="_blank">{t.contact.mapLabel}<span class="visually-hidden"> ({t.a11y.newTab})</span></a>
+            </li>
             <li class="muted-line">{t.contact.based}</li>
           </ul>
         </div>
@@ -55,7 +60,7 @@ const year = new Date().getFullYear();
 
     <hr class="rule" />
     <p class="disclaimer">{t.footer.disclaimer}</p>
-    <p class="copy"><span>© {year} {site.name}. {t.footer.rights}</span><span>Norwich, Norfolk</span></p>
+    <p class="copy"><span>© {year} {site.name}. {t.footer.rights}</span><span>{site.area}</span></p>
   </div>
 </footer>
 
@@ -83,6 +88,8 @@ const year = new Date().getFullYear();
   a, .linklike { color: var(--silver-200); text-decoration: none; font-size: 0.9375rem; overflow-wrap: anywhere; }
   a:hover, .linklike:hover { color: #fff; text-decoration: underline; }
   .linklike { background: none; border: 0; padding: 0; font: inherit; font-size: 0.9375rem; cursor: pointer; text-align: start; }
+  .addr { display: grid; gap: 0.35rem; color: var(--silver-200); font-size: 0.9375rem; }
+  .addr a { font-size: 0.875rem; color: var(--silver-300); }
   .muted-line { color: var(--silver-500); font-size: 0.875rem; }
   .disclaimer { margin: 2rem 0 1.5rem; max-width: 52rem; font-size: 0.8125rem; line-height: 1.7; color: var(--silver-400); }
   .copy { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; font-size: 0.8125rem; color: var(--silver-500); }

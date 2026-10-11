@@ -44,7 +44,7 @@ const ld = [
   },
 ];
 ---
-<Base locale={locale} path={path} title={`${d.title} | ${site.name}`} description={d.description} type="article" image={photoUrl(d.image, 1200)} jsonLd={ld}>
+<Base locale={locale} path={path} title={`${d.title} | ${site.name}`} description={d.description} type="article" image={photoUrl(d.image, 1200)} published={d.published.toISOString().slice(0, 10)} modified={d.checked.toISOString().slice(0, 10)} jsonLd={ld}>
   <article>
     <header class="ph dark">
       <div class="ph__media" aria-hidden="true"><Photo name={d.image} locale={locale} eager decorative /></div>

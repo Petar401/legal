@@ -271,6 +271,8 @@ const tr: Dict = {
     waLabel: "WhatsApp",
     phoneLabel: "Telefon",
     emailLabel: "E-posta",
+    addressLabel: 'Adres',
+    mapLabel: 'Haritalarda aç',
     waPrefill: "Merhaba Advice4you, yardıma ihtiyacım var.",
     tipsTitle: "İlk mesajınızda",
     tips: [
@@ -404,7 +406,7 @@ const tr: Dict = {
       { id: 'work', keywords: ['national insurance', 'ni numarası', 'ni numarasi', 'çalışma', 'calisma', 'bordro', 'maaş', 'maas', 'banka', 'okul', 'işe başlama'], answer: "National Insurance numarası, maaş bordrosu, banka belgeleri ve okul kaydı konusunda yardım ederiz.", link: 'services' },
       { id: 'letter', keywords: ['mektup', 'form', 'belge', 'kağıt', 'kagit', 'evrak', 'ceza', 'son tarih', 'tebligat'], answer: "Mektubu bize getirin. Sizinle birlikte okur, sade sözcüklerle açıklar ve son tarihten önce yanıt vermenize yardım ederiz.", link: 'services' },
       { id: 'privacy', keywords: ['gizli', 'gizlilik', 'mahremiyet', 'veri', 'kişisel', 'kisisel', 'güvenli', 'guvenli', 'sır', 'sir'], answer: "Bilgilerinizi yalnızca size yardım etmek için kullanırız. Yasa gerektirmedikçe izniniz olmadan paylaşmayız.", link: 'privacy' },
-      { id: 'area', keywords: ['nerede', 'norwich', 'norfolk', 'konum', 'adres', 'ofis', 'bölge', 'bolge', 'buluşma', 'bulusma'], answer: "Norwich merkezliyiz ve Norfolk genelinde insanlara yardım ediyoruz. Nerede ve nasıl buluşacağımıza birlikte karar veririz.", link: 'contact' },
+      { id: 'area', keywords: ['nerede', 'norwich', 'norfolk', 'konum', 'adres', 'ofis', 'bölge', 'bolge', 'buluşma', 'bulusma', 'çalışma saatleri', 'calisma saatleri', 'harita', 'ziyaret'], answer: 'Adresimiz: {address}. Norfolk genelinde insanlara yardım ediyoruz. Gelmeden önce bize yazın, saati birlikte belirleyelim.', link: 'contact' },
       { id: 'emergency', keywords: ['acil', 'tehlike', 'ambulans', 'polis', '999', '111', 'kaza', 'imdat'], answer: "Birinin hayatı tehlikedeyse 999’u arayın. Acil olmayan ama hızlı tıbbi yardım gerektiren durumlarda NHS 111’i arayın. Biz bir acil durum hizmeti değiliz.", link: '' },
       { id: 'thanks', keywords: ['teşekkür', 'tesekkur', 'sağ ol', 'sag ol', 'sağolun', 'sagolun', 'sağol', 'sagol', 'eyvallah', 'hoşça kal', 'hosca kal', 'görüşürüz', 'gorusuruz'], answer: "Rica ederiz. Başka yardıma ihtiyacınız olursa bize mesaj gönderin.", link: '' },
     ],
