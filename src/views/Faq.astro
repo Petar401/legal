@@ -24,7 +24,6 @@ const ld = {
         {f.items.map((i, n) => (
           <details class="faq__item" open={n === 0}>
             <summary>
-              <span class="faq__num" aria-hidden="true">{String(n + 1).padStart(2, '0')}</span>
               <h2 class="faq__q">{i.q}</h2>
               <span class="faq__icon" aria-hidden="true"></span>
             </summary>
@@ -42,11 +41,10 @@ const ld = {
   .faq { border-top: 1px solid var(--ivory-line); }
   .faq__item { border-bottom: 1px solid var(--ivory-line); }
   .faq summary {
-    display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem; gap: 1rem; align-items: center;
+    display: grid; grid-template-columns: minmax(0, 1fr) 2.5rem; gap: 1rem; align-items: center;
     padding: 1.6rem 0; cursor: pointer; list-style: none;
   }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq__num { font-family: var(--font-display); font-style: italic; color: var(--ink-muted); }
   .faq__q { font-family: var(--font-display); font-weight: 400; letter-spacing: normal; font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.25; }
   :global(:lang(ckb)) .faq__q { font-weight: 400; font-size: 1.2rem; line-height: 1.6; }
   .faq summary:hover .faq__q { color: var(--midnight-600); }
@@ -55,9 +53,10 @@ const ld = {
   .faq__icon::after { transform: rotate(90deg); }
   details[open] .faq__icon { background: var(--ink); border-color: var(--ink); color: var(--silver-50); transform: rotate(180deg); }
   details[open] .faq__icon::after { transform: rotate(0); }
-  .faq__a { padding: 0 3.5rem 1.75rem 3.5rem; color: var(--ink-soft); font-size: 1.0625rem; }
+  .faq__a { padding: 0 3.5rem 1.75rem 0; color: var(--ink-soft); font-size: 1.0625rem; }
+  :global([dir='rtl']) .faq__a { padding: 0 0 1.75rem 3.5rem; }
   .faq__a :global(a) { color: var(--midnight-600); }
   details::details-content { transition: content-visibility 0.45s allow-discrete, height 0.45s var(--ease-out); height: 0; overflow: clip; }
   details[open]::details-content { height: auto; }
-  @media (max-width: 36rem) { .faq summary { grid-template-columns: 1.75rem minmax(0, 1fr) 2.5rem; } .faq__a { padding: 0 0 1.5rem 2.75rem; } :global([dir='rtl']) .faq__a { padding: 0 2.75rem 1.5rem 0; } }
+  @media (max-width: 36rem) { .faq__a, :global([dir='rtl']) .faq__a { padding: 0 0 1.5rem; } }
 </style>

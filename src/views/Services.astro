@@ -25,9 +25,8 @@ const ld = {
   <section class="section">
     <div class="wrap">
       <ol class="svc" role="list">
-        {s.items.map((it, i) => (
+        {s.items.map((it) => (
           <li id={it.id} class="svc__item" data-reveal>
-            <span class="svc__num">{String(i + 1).padStart(2, '0')}</span>
             <div class="svc__head">
               <h2 class="svc__title">{it.title}</h2>
               <p class="svc__short">{it.short}</p>
@@ -51,13 +50,12 @@ const ld = {
   .svc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ivory-line); }
   .svc__item {
     display: grid;
-    grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
     gap: 1rem 2.5rem;
     padding: clamp(2rem, 4vw, 3.25rem) 0;
     border-bottom: 1px solid var(--ivory-line);
     scroll-margin-top: calc(var(--header-h) + 1rem);
   }
-  .svc__num { font-family: var(--font-display); font-style: italic; font-size: 1.25rem; color: var(--ink-muted); }
   .svc__title { font-size: clamp(1.75rem, 3vw, 2.5rem); margin-bottom: 0.75rem; }
   :global(:lang(ckb)) .svc__title { font-size: clamp(1.4rem, 2.4vw, 1.8rem); }
   .svc__short { color: var(--ink-soft); }
@@ -74,7 +72,6 @@ const ld = {
   }
   .limits h2 { color: var(--silver-50); margin-bottom: 1rem; }
   @media (max-width: 56rem) {
-    .svc__item { grid-template-columns: 2.5rem minmax(0, 1fr); }
-    .svc__points { grid-column: 2; }
+    .svc__item { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
