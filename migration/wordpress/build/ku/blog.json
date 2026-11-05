@@ -1,0 +1,10 @@
+{
+  "lang": "ku",
+  "type": "page",
+  "key": "blog",
+  "slug": "blog",
+  "title": "Gotar",
+  "seoTitle": "Gotar | Advice4you, Norwich",
+  "description": "Rêberên zelal û kontrolkirî ji bo hatiyên nû yên ku li Norwich û Norfolkê dijîn.",
+  "content": "<!-- wp:group {\"align\":\"full\",\"style\":{\"color\":{\"background\":\"#04070f\",\"text\":\"#e8ecf2\"},\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|70\",\"bottom\":\"var:preset|spacing|70\"}}},\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group alignfull has-text-color has-background\" style=\"background-color:#04070f;color:#e8ecf2;padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--70)\"><!-- wp:paragraph {\"className\":\"kicker\"} -->\n<p class=\"kicker\">Gotar</p>\n<!-- /wp:paragraph --><!-- wp:heading {\"level\":1} -->\n<h1 class=\"wp-block-heading\">Nîşe ji bo jiyana li Norfolkê.</h1>\n<!-- /wp:heading --><!-- wp:paragraph -->\n<p>Rêberên zelal ên li ser sîstemên rojane, li gorî çavkaniyên fermî hatine kontrolkirin.</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:group -->\n\n<!-- wp:query {\"queryId\":0,\"query\":{\"perPage\":10,\"inherit\":false,\"postType\":\"post\"}} -->\n<div class=\"wp-block-query\"><!-- wp:post-template -->\n<!-- wp:post-title {\"isLink\":true} /-->\n<!-- wp:post-excerpt /-->\n<!-- /wp:post-template --></div>\n<!-- /wp:query -->"
+}

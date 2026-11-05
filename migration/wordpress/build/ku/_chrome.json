@@ -1,0 +1,55 @@
+{
+  "lang": "ku",
+  "dir": "ltr",
+  "htmlLang": "ku",
+  "name": "Kurdî",
+  "nav": {
+    "home": "Rûpela sereke",
+    "services": "Karûbar",
+    "how": "Çawa dixebite",
+    "about": "Derbarê me de",
+    "faq": "Pirs û bersiv",
+    "blog": "Gotar",
+    "contact": "Têkilî"
+  },
+  "cta": {
+    "book": "Hevdîtinekê bigirin",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "Li ser WhatsApp ji me re binivîsin",
+    "email": "E-nameyekê ji me re bişînin",
+    "call": "Gazî me bikin",
+    "readMore": "Zêdetir bixwînin",
+    "allServices": "Hemû karûbaran bibînin",
+    "allQuestions": "Hemû pirs",
+    "readJournal": "Gotarê bixwînin",
+    "howItWorks": "Çawa dixebite"
+  },
+  "footer": {
+    "tagline": "Alîkariya taybet û pratîkî ji bo hatiyên nû. Li Norwichê ne, li seranserê Norfolkê alîkariya mirovan dikin.",
+    "explore": "Bigerin",
+    "legal": "Qanûnî",
+    "contact": "Têkilî",
+    "disclaimer": "Advice4you ne ofîsa parêzeran e û ji aliyê Immigration Advice Authority an Solicitors Regulation Authority ve nayê çavdêrîkirin. Em şêwirmendiya koçberiyê nadin. Agahiyên li ser vê malperê giştî ne û şêwirmendiya hiqûqî nînin.",
+    "rights": "Hemû maf parastî ne.",
+    "cookieSettings": "Mîhengên cookie",
+    "privacy": "Taybetî",
+    "cookies": "Cookie",
+    "terms": "Şert",
+    "accessibility": "Gihîştina hêsan"
+  },
+  "links": {
+    "home": "/ku/",
+    "services": "/ku/services/",
+    "how": "/ku/how-it-works/",
+    "about": "/ku/about/",
+    "faq": "/ku/faq/",
+    "blog": "/ku/blog/",
+    "contact": "/ku/contact/",
+    "privacy": "/ku/privacy/",
+    "cookies": "/ku/cookies/",
+    "terms": "/ku/terms/",
+    "accessibility": "/ku/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=Silav%20Advice4you%2C%20ez%20al%C3%AEkariy%C3%AA%20dixwazim.",
+    "tel": "tel:+447466951175"
+  }
+}

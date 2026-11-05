@@ -1,0 +1,55 @@
+{
+  "lang": "ro",
+  "dir": "ltr",
+  "htmlLang": "ro",
+  "name": "Română",
+  "nav": {
+    "home": "Acasă",
+    "services": "Servicii",
+    "how": "Cum funcționează",
+    "about": "Despre noi",
+    "faq": "Întrebări",
+    "blog": "Jurnal",
+    "contact": "Contact"
+  },
+  "cta": {
+    "book": "Programați o consultație",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "Scrieți-ne pe WhatsApp",
+    "email": "Trimiteți-ne un e-mail",
+    "call": "Sunați-ne",
+    "readMore": "Citiți mai mult",
+    "allServices": "Vedeți toate serviciile",
+    "allQuestions": "Toate întrebările",
+    "readJournal": "Citiți articolul",
+    "howItWorks": "Cum funcționează"
+  },
+  "footer": {
+    "tagline": "Ajutor privat și practic pentru nou-veniți. Cu sediul în Norwich, ajutăm oameni din tot comitatul Norfolk.",
+    "explore": "Explorați",
+    "legal": "Informații juridice",
+    "contact": "Contact",
+    "disclaimer": "Advice4you nu este o firmă de avocatură și nu este reglementată de Immigration Advice Authority sau de Solicitors Regulation Authority. Nu oferim consultanță în materie de imigrare. Informațiile de pe acest site sunt generale și nu constituie consultanță juridică.",
+    "rights": "Toate drepturile rezervate.",
+    "cookieSettings": "Setări cookie-uri",
+    "privacy": "Confidențialitate",
+    "cookies": "Cookie-uri",
+    "terms": "Termeni",
+    "accessibility": "Accesibilitate"
+  },
+  "links": {
+    "home": "/ro/",
+    "services": "/ro/services/",
+    "how": "/ro/how-it-works/",
+    "about": "/ro/about/",
+    "faq": "/ro/faq/",
+    "blog": "/ro/blog/",
+    "contact": "/ro/contact/",
+    "privacy": "/ro/privacy/",
+    "cookies": "/ro/cookies/",
+    "terms": "/ro/terms/",
+    "accessibility": "/ro/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=Bun%C4%83%20ziua%2C%20Advice4you.%20A%C8%99%20avea%20nevoie%20de%20ajutor.",
+    "tel": "tel:+447466951175"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "lang": "bg",
+  "dir": "ltr",
+  "htmlLang": "bg",
+  "name": "Български",
+  "nav": {
+    "home": "Начало",
+    "services": "Услуги",
+    "how": "Как работим",
+    "about": "За нас",
+    "faq": "Въпроси",
+    "blog": "Статии",
+    "contact": "Контакти"
+  },
+  "cta": {
+    "book": "Запазете консултация",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "Пишете ни в WhatsApp",
+    "email": "Пишете ни по имейл",
+    "call": "Обадете ни се",
+    "readMore": "Прочетете повече",
+    "allServices": "Всички услуги",
+    "allQuestions": "Всички въпроси",
+    "readJournal": "Прочетете статията",
+    "howItWorks": "Как работим"
+  },
+  "footer": {
+    "tagline": "Дискретна, практична помощ за новодошли. Намираме се в Норич и помагаме на хора из цял Норфолк.",
+    "explore": "Разгледайте",
+    "legal": "Правна информация",
+    "contact": "Контакти",
+    "disclaimer": "Advice4you не е адвокатска кантора и не се регулира от Immigration Advice Authority или от Solicitors Regulation Authority. Не даваме имиграционни съвети. Информацията на този сайт е обща и не е правен съвет.",
+    "rights": "Всички права запазени.",
+    "cookieSettings": "Настройки за бисквитките",
+    "privacy": "Поверителност",
+    "cookies": "Бисквитки",
+    "terms": "Условия",
+    "accessibility": "Достъпност"
+  },
+  "links": {
+    "home": "/bg/",
+    "services": "/bg/services/",
+    "how": "/bg/how-it-works/",
+    "about": "/bg/about/",
+    "faq": "/bg/faq/",
+    "blog": "/bg/blog/",
+    "contact": "/bg/contact/",
+    "privacy": "/bg/privacy/",
+    "cookies": "/bg/cookies/",
+    "terms": "/bg/terms/",
+    "accessibility": "/bg/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D0%B5%D0%B9%D1%82%D0%B5%2C%20Advice4you.%20%D0%91%D0%B8%D1%85%20%D0%B8%D1%81%D0%BA%D0%B0%D0%BB(%D0%B0)%20%D0%B4%D0%B0%20%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%20%D0%BF%D0%BE%D0%BC%D0%BE%D1%89.",
+    "tel": "tel:+447466951175"
+  }
+}
