@@ -1,0 +1,10 @@
+{
+  "lang": "bg",
+  "type": "page",
+  "key": "blog",
+  "slug": "blog",
+  "title": "Статии",
+  "seoTitle": "Статии | Advice4you, Норич",
+  "description": "Ясни и проверени ръководства за новодошли, които живеят в Норич и Норфолк.",
+  "content": "<!-- wp:group {\"align\":\"full\",\"style\":{\"color\":{\"background\":\"#04070f\",\"text\":\"#e8ecf2\"},\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|70\",\"bottom\":\"var:preset|spacing|70\"}}},\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group alignfull has-text-color has-background\" style=\"background-color:#04070f;color:#e8ecf2;padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--70)\"><!-- wp:paragraph {\"className\":\"kicker\"} -->\n<p class=\"kicker\">Статии</p>\n<!-- /wp:paragraph --><!-- wp:heading {\"level\":1} -->\n<h1 class=\"wp-block-heading\">Бележки за живота в Норфолк.</h1>\n<!-- /wp:heading --><!-- wp:paragraph -->\n<p>Ясни ръководства за ежедневните системи, проверени по официални източници.</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:group -->\n\n<!-- wp:query {\"queryId\":0,\"query\":{\"perPage\":10,\"inherit\":false,\"postType\":\"post\"}} -->\n<div class=\"wp-block-query\"><!-- wp:post-template -->\n<!-- wp:post-title {\"isLink\":true} /-->\n<!-- wp:post-excerpt /-->\n<!-- /wp:post-template --></div>\n<!-- /wp:query -->"
+}

@@ -1,0 +1,55 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "htmlLang": "en-GB",
+  "name": "English",
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "how": "How it works",
+    "about": "About",
+    "faq": "FAQ",
+    "blog": "Journal",
+    "contact": "Contact"
+  },
+  "cta": {
+    "book": "Book a consultation",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "Message us on WhatsApp",
+    "email": "Email us",
+    "call": "Call us",
+    "readMore": "Read more",
+    "allServices": "See all services",
+    "allQuestions": "All questions",
+    "readJournal": "Read the article",
+    "howItWorks": "How it works"
+  },
+  "footer": {
+    "tagline": "Private, practical help for newcomers. Based in Norwich, helping people across Norfolk.",
+    "explore": "Explore",
+    "legal": "Legal",
+    "contact": "Contact",
+    "disclaimer": "Advice4you is not a law firm and is not regulated by the Immigration Advice Authority or the Solicitors Regulation Authority. We do not give immigration advice. The information on this website is general and is not legal advice.",
+    "rights": "All rights reserved.",
+    "cookieSettings": "Cookie settings",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "terms": "Terms",
+    "accessibility": "Accessibility"
+  },
+  "links": {
+    "home": "/",
+    "services": "/services/",
+    "how": "/how-it-works/",
+    "about": "/about/",
+    "faq": "/faq/",
+    "blog": "/blog/",
+    "contact": "/contact/",
+    "privacy": "/privacy/",
+    "cookies": "/cookies/",
+    "terms": "/terms/",
+    "accessibility": "/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=Hello%20Advice4you%2C%20I%20would%20like%20some%20help.",
+    "tel": "tel:+447466951175"
+  }
+}

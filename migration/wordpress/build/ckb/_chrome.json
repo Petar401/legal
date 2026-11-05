@@ -1,0 +1,55 @@
+{
+  "lang": "ckb",
+  "dir": "rtl",
+  "htmlLang": "ckb",
+  "name": "کوردی",
+  "nav": {
+    "home": "سەرەتا",
+    "services": "خزمەتگوزارییەکان",
+    "how": "چۆن کار دەکات",
+    "about": "دەربارە",
+    "faq": "پرسیارە باوەکان",
+    "blog": "وتارەکان",
+    "contact": "پەیوەندی"
+  },
+  "cta": {
+    "book": "کاتی ڕاوێژ حیجز بکەن",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "لە WhatsApp نامەمان بۆ بنێرن",
+    "email": "ئیمەیڵمان بۆ بنێرن",
+    "call": "پەیوەندیمان پێوە بکەن",
+    "readMore": "زیاتر بخوێننەوە",
+    "allServices": "هەموو خزمەتگوزارییەکان ببینن",
+    "allQuestions": "هەموو پرسیارەکان",
+    "readJournal": "وتارەکە بخوێننەوە",
+    "howItWorks": "چۆن کار دەکات"
+  },
+  "footer": {
+    "tagline": "یارمەتیی تایبەت و کرداری بۆ تازەهاتووان. لە نۆریچین و یارمەتیی خەڵکی سەرانسەری نۆرفۆک دەدەین.",
+    "explore": "گەڕان",
+    "legal": "یاسایی",
+    "contact": "پەیوەندی",
+    "disclaimer": "Advice4you نووسینگەی پارێزەران نییە و لە ژێر چاودێریی Immigration Advice Authority یان Solicitors Regulation Authority دا نییە. ڕاوێژی کۆچبەری نادەین. زانیارییەکانی ئەم ماڵلاپەڕە گشتین و ڕاوێژی یاسایی نین.",
+    "rights": "هەموو مافەکان پارێزراون.",
+    "cookieSettings": "ڕێکخستنەکانی کووکی",
+    "privacy": "پاراستنی زانیاری",
+    "cookies": "کووکی",
+    "terms": "مەرجەکان",
+    "accessibility": "ئاسانیی بەکارهێنان"
+  },
+  "links": {
+    "home": "/ckb/",
+    "services": "/ckb/services/",
+    "how": "/ckb/how-it-works/",
+    "about": "/ckb/about/",
+    "faq": "/ckb/faq/",
+    "blog": "/ckb/blog/",
+    "contact": "/ckb/contact/",
+    "privacy": "/ckb/privacy/",
+    "cookies": "/ckb/cookies/",
+    "terms": "/ckb/terms/",
+    "accessibility": "/ckb/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=%D8%B3%DA%B5%D8%A7%D9%88%20Advice4you%D8%8C%20%D8%AD%DB%95%D8%B2%20%D8%AF%DB%95%DA%A9%DB%95%D9%85%20%DB%8C%D8%A7%D8%B1%D9%85%DB%95%D8%AA%DB%8C%D9%85%20%D8%A8%D8%AF%DB%95%D9%86.",
+    "tel": "tel:+447466951175"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "lang": "tr",
+  "dir": "ltr",
+  "htmlLang": "tr",
+  "name": "Türkçe",
+  "nav": {
+    "home": "Ana sayfa",
+    "services": "Hizmetler",
+    "how": "Nasıl çalışır",
+    "about": "Hakkımızda",
+    "faq": "SSS",
+    "blog": "Yazılar",
+    "contact": "İletişim"
+  },
+  "cta": {
+    "book": "Danışmanlık randevusu alın",
+    "whatsapp": "WhatsApp",
+    "whatsappLong": "WhatsApp’tan bize yazın",
+    "email": "Bize e-posta gönderin",
+    "call": "Bizi arayın",
+    "readMore": "Devamını okuyun",
+    "allServices": "Tüm hizmetleri görün",
+    "allQuestions": "Tüm sorular",
+    "readJournal": "Yazıyı okuyun",
+    "howItWorks": "Nasıl çalışır"
+  },
+  "footer": {
+    "tagline": "Yeni gelenler için size özel, pratik yardım. Norwich merkezliyiz, Norfolk genelinde insanlara yardım ediyoruz.",
+    "explore": "Keşfedin",
+    "legal": "Yasal",
+    "contact": "İletişim",
+    "disclaimer": "Advice4you bir hukuk bürosu değildir. Immigration Advice Authority ya da Solicitors Regulation Authority tarafından denetlenmez. Göçmenlik danışmanlığı vermiyoruz. Bu web sitesindeki bilgiler geneldir ve hukuki tavsiye değildir.",
+    "rights": "Tüm hakları saklıdır.",
+    "cookieSettings": "Çerez ayarları",
+    "privacy": "Gizlilik",
+    "cookies": "Çerezler",
+    "terms": "Koşullar",
+    "accessibility": "Erişilebilirlik"
+  },
+  "links": {
+    "home": "/tr/",
+    "services": "/tr/services/",
+    "how": "/tr/how-it-works/",
+    "about": "/tr/about/",
+    "faq": "/tr/faq/",
+    "blog": "/tr/blog/",
+    "contact": "/tr/contact/",
+    "privacy": "/tr/privacy/",
+    "cookies": "/tr/cookies/",
+    "terms": "/tr/terms/",
+    "accessibility": "/tr/accessibility/",
+    "whatsapp": "https://wa.me/447466951175?text=Merhaba%20Advice4you%2C%20yard%C4%B1ma%20ihtiyac%C4%B1m%20var.",
+    "tel": "tel:+447466951175"
+  }
+}
